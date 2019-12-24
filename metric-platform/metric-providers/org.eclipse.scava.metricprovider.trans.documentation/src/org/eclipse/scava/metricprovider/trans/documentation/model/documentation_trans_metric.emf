@@ -1,0 +1,30 @@
+package org.eclipse.scava.metricprovider.trans.documentation.model;
+
+@db(qualifiedCollectionNames="true")
+@customize
+class DocumentationTransMetric {
+	val DocumentationEntry[*] documentationEntries;
+	val Documentation[*] documentation;
+}
+
+class DocumentationEntry {
+	@searchable
+	attr String documentationId;
+	attr String entryId;
+	attr String body;
+	attr String originalFormatName;
+	attr String originalFormatMime;
+	attr boolean htmlFormatted;
+}
+
+class Documentation {
+	@searchable
+	attr String documentationId;
+	attr String[*] entriesId;
+	attr String[*] removedEntriesId;
+	attr String lastUpdateDate;
+	attr String lastRevisionAnalyzed;
+	attr String nextUpdateDate;
+	attr boolean updated;
+}
+

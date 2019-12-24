@@ -1,0 +1,71 @@
+{
+	"_meta" : {
+		"mapping_version" : "1.2"
+	},
+	"properties" : { 
+		"comment_Id" : { 
+			"type" : "keyword" 
+		}, 
+		"body" : { 
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		}, 
+		"emotional_dimension" : { 
+			"type" : "keyword" 
+		}, 
+		"sentiment" : { 
+			"type" : "keyword" 
+		}, 
+		"plain_text" : { 
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    } 
+		}, 
+		"request_reply_classification" : { 
+			"type" : "keyword" 
+		}, 
+		"content_class" : { 
+			"type" : "keyword" 
+		}, 
+		"contains_code" : { 
+			"type" : "boolean" 
+		}, 
+		"bug_id" : { 
+			"type" : "keyword" 
+		}, 
+		"project_name" : { 
+			"type" : "keyword" 
+		}, 
+		"creator" : { 
+			"type" : "keyword" 
+		}, 
+		"created_at" : { 
+			"type" : "date" 
+		},
+		"subject" : { 
+			"type" : "keyword" 
+		}, 
+		"uid" : { 
+			"type" : "keyword" 
+		},
+		"referring_to" : {
+			"properties" : {
+				"bugs" : {
+					"type" : "text"
+				},
+				"commits" : { 
+					"type" : "text"
+				}
+			}
+		}
+	} 
+}

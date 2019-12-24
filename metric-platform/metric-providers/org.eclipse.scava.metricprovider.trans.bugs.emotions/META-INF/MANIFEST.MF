@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Overallemotionsbugzilla
+Bundle-SymbolicName: org.eclipse.scava.metricprovider.trans.bugs.emotions;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.scava.metricprovider.trans.bugs.emotions.Activator
+Require-Bundle: org.eclipse.core.runtime,
+ com.googlecode.pongo.runtime,
+ org.eclipse.scava.platform,
+ org.eclipse.scava.repository.model,
+ org.eclipse.scava.metricprovider.trans.emotionclassification,
+ org.eclipse.scava.metricprovider.trans.indexing.preparation
+Bundle-ActivationPolicy: lazy
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: org.eclipse.scava.metricprovider.trans.bugs.emotions,
+ org.eclipse.scava.metricprovider.trans.bugs.emotions.model

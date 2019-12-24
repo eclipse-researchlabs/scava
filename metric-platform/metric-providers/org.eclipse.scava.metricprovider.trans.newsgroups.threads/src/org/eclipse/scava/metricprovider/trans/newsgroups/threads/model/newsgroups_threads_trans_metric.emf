@@ -1,0 +1,41 @@
+package org.eclipse.scava.metricprovider.trans.newsgroups.threads.model;
+
+@db(qualifiedCollectionNames="true")
+@customize
+class NewsgroupsThreadsTransMetric {
+    val ThreadData[*] threads;
+    val NewsgroupData[*] newsgroups;
+    val CurrentDate[*] date;
+}
+
+class ThreadData {
+   @searchable
+   attr String threadId;
+   attr String newsgroupName;
+   attr String subject;
+   attr String[*] articlesId;
+   val ArticleData[*] articles;
+}
+
+class CurrentDate {
+	attr String date;
+}    
+
+class ArticleData {
+   @searchable
+   attr String newsgroupName;
+   attr long articleNumber;
+   attr String articleId;
+   attr String date;
+   attr String from;
+   attr String subject;
+   attr String contentClass;
+   attr String references;   
+}
+
+class NewsgroupData {
+	@searchable
+	attr String newsgroupName;
+	attr int threads;
+	attr int previousThreads;
+}

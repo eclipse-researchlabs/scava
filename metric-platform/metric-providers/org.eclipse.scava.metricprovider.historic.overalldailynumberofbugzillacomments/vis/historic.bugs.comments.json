@@ -1,0 +1,31 @@
+{
+	"metricid" : "org.eclipse.scava.metricprovider.historic.bugs.comments.CommentsHistoricMetricProvider",
+	"vis" : [ 
+		{
+			"id" : "bugs.comments",
+			"name" : "Bug Tracker Comments",
+			"description" : "The number of comments submitted every day per bug tracker." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Comments", "field" : "$numberOfComments" } ]
+			},
+			"x" : "Date",
+			"y" : "Comments",
+			"timeSeries" : true
+		},{
+			"id" : "bugs.cumulativeComments",
+			"name" : "Bug Tracker Comments (Cumulative)",
+			"description" : "The number of comments submitted up to and including the current date per bug tracker." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Comments", "field" : "$cumulativeNumberOfComments" } ]
+			},
+			"x" : "Date",
+			"y" : "Comments",
+			"timeSeries" : true
+		}
+	]
+
+}

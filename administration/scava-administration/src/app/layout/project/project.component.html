@@ -1,0 +1,69 @@
+<div>
+  <div class="page-header">
+    <h2>Projects</h2>
+    <div *ngIf="hasAuthorities" class="btn-group" role="group" style="float: right;margin-top: -40px;">
+      <button type="button" class="btn btn-outline-dark" [routerLink]="['/project/import']">Import Project</button>
+      <button type="button" class="btn btn-outline-dark" [routerLink]="['/project/create']">Create Project</button>
+    </div>
+    <hr/>
+  </div>
+  <div class="col-xs col-sm col-md col-lg col-xl">
+    <div *ngFor="let project of projectList" class="bg-light card mb-3" style="margin :10px;">
+      <div class="card-header overflow-guard text-white bg-secondary" style="padding: 0.5rem;">
+        <h4 style="margin: 0px; white-space: nowrap; overflow: hidden;" class="card-title">
+          <span>{{project.name}}</span>
+        </h4>
+      </div>
+      <div class="card-body worker-card-body">
+        <div class="row">
+          <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <b style="white-space: nowrap">Status :</b>
+          </div>
+          <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+            <span style="white-space: nowrap" *ngIf="project?.globalStatus == 'none'">Not Data</span>
+            <span style="white-space: nowrap" *ngIf="project?.globalStatus == 'up-to-date' && project?.hasTasks">Up To Date</span>
+            <span style="white-space: nowrap" *ngIf="project?.globalStatus == 'in-progress' && project?.hasTasks">Analysis In Progress</span>
+            <span style="white-space: nowrap" *ngIf="project?.globalStatus == 'error' && project?.hasTasks">Error</span>
+          </div>
+        </div>
+        <div *ngIf="project.homePage" class="row">
+          <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <b style="white-space: nowrap">Home Page :</b>
+          </div>
+          <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9 overflow-multi">
+            <a style="white-space: nowrap" href="{{project?.homePage}}" title="{{project?.homePage}}" target="_blank">{{project?.homePage}}</a>
+          </div>
+        </div>
+        <div class="row" *ngIf="project.vcsRepositories.length !== 0">
+          <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <b style="white-space: nowrap">VCS Repositories :</b>
+          </div>
+          <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9 overflow-multi">
+            <span *ngFor="let vcs of project.vcsRepositories">
+              <a style="white-space: nowrap" href="{{vcs.url}}" title="{{vcs.url}}" target="_blank">{{vcs.url}}</a><br />
+            </span>
+          </div>
+        </div>
+        <div class="row" *ngIf="project.downloadsUrl">
+          <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <b style="white-space: nowrap">Download URL :</b>
+          </div>
+          <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9 overflow-multi">
+            <a style="white-space: nowrap" href="{{project?.downloadsUrl}}" title="{{project?.downloadsUrl}}" target="_blank">{{project?.downloadsUrl}}</a>
+          </div>
+        </div>
+        <div class="row" *ngIf="project.size">
+          <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+            <b style="white-space: nowrap">Project Size :</b>
+          </div>
+          <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9 overflow-multi">
+            <span style="white-space: nowrap">{{project?.size}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer text-right" style="padding: 0.5em;">
+        <button type="button" class="btn btn-outline-dark btn-sm" [routerLink]="['/project/configure/', project.shortName]">Configure</button>
+      </div>
+    </div>
+  </div>
+</div>

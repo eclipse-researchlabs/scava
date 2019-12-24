@@ -1,0 +1,21 @@
+{
+	"metricid" : "org.eclipse.scava.metricprovider.historic.bugs.migrationissues.BugTrackerMigrationIssueHistoricMetricProvider",
+	"vis" : [ 
+		{
+			"id" : "bugs.dailymigrationissues",
+			"name" : "BugsMigrationIssues (daily)",
+			"description" : "The number of bug migration issues per day, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"rows" : "$dailyBugTrackerMigrationData",
+				"cols" : [  { "name" : "Date", "field" : "$__date" },
+					{ "name" : "BugTrackerID", "field" : "$bugTrackerId"},
+					{ "name" : "MigrationIssues", "field" : "$numberOfIssues" },
+					{ "name" : "BugsID", "field" : "$bugsId" } ]
+			},
+			"x" : "Date",
+			"y" : "MigrationIssues",
+			"timeSeries" : true
+		}
+	]
+}

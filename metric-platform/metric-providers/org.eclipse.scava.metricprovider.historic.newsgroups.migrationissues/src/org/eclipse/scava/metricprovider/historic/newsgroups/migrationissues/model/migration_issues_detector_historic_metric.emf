@@ -1,0 +1,12 @@
+package org.eclipse.scava.metricprovider.historic.newsgroups.migrationissues.model;
+
+class NewsgroupsMigrationIssueHistoricMetric {
+	val DailyNewsgroupsMigrationData[*] dailyNewsgroupsMigrationData;
+}
+
+class DailyNewsgroupsMigrationData {
+   	attr String newsgroupName;
+   	attr String[*] threadsId;
+   	attr int numberOfIssues;
+}
+

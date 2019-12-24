@@ -1,0 +1,32 @@
+<?nsuri org.eclipse.scava.crossflow?>
+<?render-graphviz-dot graphviz.egl?>
+<?import templates.flexmi?>
+<_>
+
+	<!-- Simple example that performs calculations from a CSV -->
+	<workflow name="CalculatorWorkflow">
+		<simple-source name="CalculationSource" produces="Calculation" to="Calculations"/>
+		<simple-task name="Calculator" produces="CalculationResult" to="CalculationResults"/>
+		<simple-sink name="CalculationResultsSink"/>
+		
+		<type name="Calculation">
+			<datafield name="a" type="int"/>
+			<datafield name="b" type="int"/>
+			<datafield name="operator" type="String"/>
+		</type>
+		
+		<type name="CalculationResult" extending="Calculation">
+			<datafield name="worker" type="String"/>
+			<datafield name="result" type="String"/>
+			<enumfield name="workerLang" values="python,java"/>
+		</type>
+		
+	<language name="Java" package="org.eclipse.scava.crossflow.tests.calculator" genOutputFolder="src-gen" outputFolder="src"/>
+	<language name="Python" package="calculator">
+		<parameter name="skipReqsTxt" value="true"/>
+		<parameter name="skipReadme" value="true"/>
+		<parameter name="skipMain" value="true"/>
+	</language>
+	</workflow>	
+	
+</_>

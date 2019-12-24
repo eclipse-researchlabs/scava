@@ -1,0 +1,31 @@
+{
+	"metricid" : "org.eclipse.scava.metricprovider.historic.bugs.newusers.NewUsersHistoricMetricProvider",
+	"vis" : [ 
+		{
+			"id" : "bugs.newUsers",
+			"name" : "Bug Tracker New Users",
+			"description" : "The number of new users every day per bug tracker." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Users", "field" : "$numberOfNewUsers" } ]
+			},
+			"x" : "Date",
+			"y" : "Users",
+			"timeSeries" : true
+		},{
+			"id" : "bugs.cumulativeNewUsers",
+			"name" : "Bug Tracker New Users (Cumulative)",
+			"description" : "The number of new users up to and including the current date per bug tracker." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Users", "field" : "$cumulativeNumberOfNewUsers" } ]
+			},
+			"x" : "Date",
+			"y" : "Users",
+			"timeSeries" : true
+		}
+	]
+
+}

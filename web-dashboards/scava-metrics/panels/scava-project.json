@@ -1,0 +1,229 @@
+{
+    "dashboard": {
+        "id": "ScavaProject",
+        "value": {
+            "description": "Project Dashboard (dev/debug)",
+            "hits": 0,
+            "kibanaSavedObjectMeta": {
+                "searchSourceJSON": "{\"version\":true,\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[],\"highlightAll\":true}"
+            },
+            "optionsJSON": "{\"darkTheme\":false,\"hidePanelTitles\":false,\"useMargins\":false}",
+            "panelsJSON": "[{\"panelIndex\":\"2\",\"gridData\":{\"x\":11,\"y\":11,\"w\":13,\"h\":12,\"i\":\"2\"},\"embeddableConfig\":{},\"id\":\"f41d3180-8f36-11e8-a362-0d37aacd7dee\",\"title\":\"Metric IDs\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"3\",\"gridData\":{\"x\":0,\"y\":11,\"w\":11,\"h\":12,\"i\":\"3\"},\"embeddableConfig\":{\"vis\":{\"params\":{\"sort\":{\"columnIndex\":0,\"direction\":\"asc\"}}}},\"id\":\"8d57fd40-8f36-11e8-a362-0d37aacd7dee\",\"title\":\"Metric names\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"4\",\"gridData\":{\"x\":24,\"y\":0,\"w\":24,\"h\":11,\"i\":\"4\"},\"embeddableConfig\":{},\"id\":\"b72e05a0-8f37-11e8-a362-0d37aacd7dee\",\"title\":\"Evolution max values\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"5\",\"gridData\":{\"x\":11,\"y\":0,\"w\":13,\"h\":11,\"i\":\"5\"},\"embeddableConfig\":{},\"id\":\"266c86e0-8f37-11e8-a362-0d37aacd7dee\",\"title\":\"Projects\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"6\",\"gridData\":{\"x\":24,\"y\":23,\"w\":24,\"h\":14,\"i\":\"6\"},\"embeddableConfig\":{},\"id\":\"bce095b0-ac7b-11e8-beb2-277ea76a535b\",\"title\":\"Evolution avg values\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"7\",\"gridData\":{\"x\":24,\"y\":11,\"w\":24,\"h\":12,\"i\":\"7\"},\"embeddableConfig\":{},\"id\":\"1dc2b830-ac7d-11e8-beb2-277ea76a535b\",\"title\":\"Evolution sum values\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"8\",\"gridData\":{\"x\":0,\"y\":0,\"w\":11,\"h\":11,\"i\":\"8\"},\"embeddableConfig\":{},\"id\":\"632e2030-acdc-11e8-beb2-277ea76a535b\",\"title\":\"Metric types\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"9\",\"gridData\":{\"x\":0,\"y\":23,\"w\":24,\"h\":14,\"i\":\"9\"},\"embeddableConfig\":{},\"id\":\"3279b950-ace0-11e8-beb2-277ea76a535b\",\"title\":\"Metric details\",\"type\":\"search\",\"version\":\"6.3.1\"},{\"panelIndex\":\"10\",\"gridData\":{\"x\":0,\"y\":37,\"w\":10,\"h\":13,\"i\":\"10\"},\"embeddableConfig\":{},\"id\":\"46ecb0f0-7ce6-11e9-90b8-953deda2e5b5\",\"title\":\"Max value\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"11\",\"gridData\":{\"x\":19,\"y\":37,\"w\":10,\"h\":13,\"i\":\"11\"},\"embeddableConfig\":{},\"id\":\"c081b8c0-7ce6-11e9-90b8-953deda2e5b5\",\"title\":\"Avg value\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"12\",\"gridData\":{\"x\":29,\"y\":37,\"w\":9,\"h\":13,\"i\":\"12\"},\"embeddableConfig\":{},\"id\":\"55885b40-7ce7-11e9-90b8-953deda2e5b5\",\"title\":\"Sum value\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"13\",\"gridData\":{\"x\":10,\"y\":37,\"w\":9,\"h\":13,\"i\":\"13\"},\"embeddableConfig\":{},\"id\":\"83bec270-7ce6-11e9-90b8-953deda2e5b5\",\"title\":\"Min Value\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"panelIndex\":\"14\",\"gridData\":{\"x\":38,\"y\":37,\"w\":10,\"h\":13,\"i\":\"14\"},\"embeddableConfig\":{},\"id\":\"bea4c5f0-7ce7-11e9-90b8-953deda2e5b5\",\"title\":\"Median value\",\"type\":\"visualization\",\"version\":\"6.3.1\"},{\"title\":\"Information about the dashboard\",\"panelIndex\":\"15\",\"gridData\":{\"x\":0,\"y\":50,\"w\":48,\"h\":16,\"i\":\"15\"},\"embeddableConfig\":{},\"id\":\"bb5443d0-1102-11ea-860d-0de674299f36\",\"type\":\"visualization\",\"version\":\"6.3.1\"}]",
+            "refreshInterval": {
+                "display": "Off",
+                "pause": false,
+                "value": 0
+            },
+            "timeFrom": "now-10y",
+            "timeRestore": true,
+            "timeTo": "now",
+            "title": "scava-project (dev/debug)",
+            "version": 1
+        }
+    },
+    "index_patterns": [
+        {
+            "id": "ea1313b0-8f29-11e8-a362-0d37aacd7dee",
+            "value": {
+                "fields": "[{\"name\":\"_id\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":false},{\"name\":\"_index\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":false},{\"name\":\"_score\",\"type\":\"number\",\"count\":0,\"scripted\":false,\"searchable\":false,\"aggregatable\":false,\"readFromDocValues\":false},{\"name\":\"_source\",\"type\":\"_source\",\"count\":0,\"scripted\":false,\"searchable\":false,\"aggregatable\":false,\"readFromDocValues\":false},{\"name\":\"_type\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":false},{\"name\":\"datetime\",\"type\":\"date\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"meta.top_projects\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"metric_class\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"metric_desc\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"metric_es_compute\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"metric_es_value\",\"type\":\"number\",\"count\":1,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"metric_es_value_weighted\",\"type\":\"number\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"metric_id\",\"type\":\"string\",\"count\":1,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"metric_name\",\"type\":\"string\",\"count\":1,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"metric_type\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"project\",\"type\":\"string\",\"count\":1,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true},{\"name\":\"uuid\",\"type\":\"string\",\"count\":0,\"scripted\":false,\"searchable\":true,\"aggregatable\":true,\"readFromDocValues\":true}]",
+                "timeFieldName": "datetime",
+                "title": "scava-metrics"
+            }
+        }
+    ],
+    "searches": [
+        {
+            "id": "3279b950-ace0-11e8-beb2-277ea76a535b",
+            "value": {
+                "columns": [
+                    "metric_desc",
+                    "metric_name",
+                    "project",
+                    "metric_es_value"
+                ],
+                "description": "",
+                "hits": 0,
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\"index\":\"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\"highlightAll\":true,\"version\":true,\"query\":{\"language\":\"lucene\",\"query\":\"\"},\"filter\":[]}"
+                },
+                "sort": [
+                    "datetime",
+                    "desc"
+                ],
+                "title": "ScavaSearch",
+                "version": 1
+            }
+        }
+    ],
+    "visualizations": [
+        {
+            "id": "f41d3180-8f36-11e8-a362-0d37aacd7dee",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\n  \"index\": \"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\n  \"filter\": [],\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"lucene\"\n  }\n}"
+                },
+                "title": "ScavaMetricId",
+                "uiStateJSON": "{\n  \"vis\": {\n    \"params\": {\n      \"sort\": {\n        \"columnIndex\": null,\n        \"direction\": null\n      }\n    }\n  }\n}",
+                "version": 1,
+                "visState": "{\n  \"title\": \"ScavaMetricId\",\n  \"type\": \"table\",\n  \"params\": {\n    \"perPage\": 10,\n    \"showPartialRows\": false,\n    \"showMeticsAtAllLevels\": false,\n    \"sort\": {\n      \"columnIndex\": null,\n      \"direction\": null\n    },\n    \"showTotal\": false,\n    \"totalFunc\": \"sum\"\n  },\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"schema\": \"metric\",\n      \"params\": {}\n    },\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"schema\": \"bucket\",\n      \"params\": {\n        \"field\": \"metric_id\",\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\",\n        \"size\": 1000,\n        \"order\": \"desc\",\n        \"orderBy\": \"1\",\n        \"customLabel\": \"Metric Id\"\n      }\n    }\n  ]\n}"
+            }
+        },
+        {
+            "id": "8d57fd40-8f36-11e8-a362-0d37aacd7dee",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\n  \"index\": \"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\n  \"filter\": [],\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"lucene\"\n  }\n}"
+                },
+                "title": "ScavaMetricName",
+                "uiStateJSON": "{\n  \"vis\": {\n    \"params\": {\n      \"sort\": {\n        \"columnIndex\": null,\n        \"direction\": null\n      }\n    }\n  }\n}",
+                "version": 1,
+                "visState": "{\n  \"title\": \"ScavaMetricName\",\n  \"type\": \"table\",\n  \"params\": {\n    \"perPage\": 10,\n    \"showPartialRows\": false,\n    \"showMeticsAtAllLevels\": false,\n    \"sort\": {\n      \"columnIndex\": null,\n      \"direction\": null\n    },\n    \"showTotal\": false,\n    \"totalFunc\": \"sum\"\n  },\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"schema\": \"metric\",\n      \"params\": {}\n    },\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"schema\": \"bucket\",\n      \"params\": {\n        \"field\": \"metric_name\",\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\",\n        \"size\": 1000,\n        \"order\": \"desc\",\n        \"orderBy\": \"1\",\n        \"customLabel\": \"Metric name\"\n      }\n    }\n  ]\n}"
+            }
+        },
+        {
+            "id": "b72e05a0-8f37-11e8-a362-0d37aacd7dee",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\n  \"index\": \"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\n  \"filter\": [],\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"lucene\"\n  }\n}"
+                },
+                "title": "ScavaMetricValueTS",
+                "uiStateJSON": "{}",
+                "version": 1,
+                "visState": "{\n  \"title\": \"ScavaMetricValueTS\",\n  \"type\": \"histogram\",\n  \"params\": {\n    \"type\": \"histogram\",\n    \"grid\": {\n      \"categoryLines\": false,\n      \"style\": {\n        \"color\": \"#eee\"\n      }\n    },\n    \"categoryAxes\": [\n      {\n        \"id\": \"CategoryAxis-1\",\n        \"type\": \"category\",\n        \"position\": \"bottom\",\n        \"show\": true,\n        \"style\": {},\n        \"scale\": {\n          \"type\": \"linear\"\n        },\n        \"labels\": {\n          \"show\": true,\n          \"truncate\": 100\n        },\n        \"title\": {}\n      }\n    ],\n    \"valueAxes\": [\n      {\n        \"id\": \"ValueAxis-1\",\n        \"name\": \"LeftAxis-1\",\n        \"type\": \"value\",\n        \"position\": \"left\",\n        \"show\": true,\n        \"style\": {},\n        \"scale\": {\n          \"type\": \"linear\",\n          \"mode\": \"normal\"\n        },\n        \"labels\": {\n          \"show\": true,\n          \"rotate\": 0,\n          \"filter\": false,\n          \"truncate\": 100\n        },\n        \"title\": {\n          \"text\": \"Max metric_es_value\"\n        }\n      }\n    ],\n    \"seriesParams\": [\n      {\n        \"show\": \"true\",\n        \"type\": \"histogram\",\n        \"mode\": \"stacked\",\n        \"data\": {\n          \"label\": \"Max metric_es_value\",\n          \"id\": \"1\"\n        },\n        \"valueAxis\": \"ValueAxis-1\",\n        \"drawLinesBetweenPoints\": true,\n        \"showCircles\": true\n      }\n    ],\n    \"addTooltip\": true,\n    \"addLegend\": true,\n    \"legendPosition\": \"right\",\n    \"times\": [],\n    \"addTimeMarker\": false\n  },\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"enabled\": true,\n      \"type\": \"max\",\n      \"schema\": \"metric\",\n      \"params\": {\n        \"field\": \"metric_es_value\",\n        \"customLabel\": \"\"\n      }\n    },\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"date_histogram\",\n      \"schema\": \"segment\",\n      \"params\": {\n        \"field\": \"datetime\",\n        \"interval\": \"auto\",\n        \"customInterval\": \"2h\",\n        \"min_doc_count\": 1,\n        \"extended_bounds\": {}\n      }\n    }\n  ]\n}"
+            }
+        },
+        {
+            "id": "266c86e0-8f37-11e8-a362-0d37aacd7dee",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\n  \"index\": \"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\n  \"filter\": [],\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"lucene\"\n  }\n}"
+                },
+                "title": "ScavaProject",
+                "uiStateJSON": "{\n  \"vis\": {\n    \"params\": {\n      \"sort\": {\n        \"columnIndex\": null,\n        \"direction\": null\n      }\n    }\n  }\n}",
+                "version": 1,
+                "visState": "{\n  \"title\": \"ScavaProject\",\n  \"type\": \"table\",\n  \"params\": {\n    \"perPage\": 10,\n    \"showPartialRows\": false,\n    \"showMeticsAtAllLevels\": false,\n    \"sort\": {\n      \"columnIndex\": null,\n      \"direction\": null\n    },\n    \"showTotal\": false,\n    \"totalFunc\": \"sum\"\n  },\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"schema\": \"metric\",\n      \"params\": {}\n    },\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"schema\": \"bucket\",\n      \"params\": {\n        \"field\": \"project\",\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\",\n        \"size\": 1000,\n        \"order\": \"desc\",\n        \"orderBy\": \"1\",\n        \"customLabel\": \"project\"\n      }\n    }\n  ]\n}"
+            }
+        },
+        {
+            "id": "bce095b0-ac7b-11e8-beb2-277ea76a535b",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\"index\":\"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+                },
+                "title": "ScavaMetricAvgValueTS",
+                "uiStateJSON": "{}",
+                "version": 1,
+                "visState": "{\"title\":\"ScavaMetricAvgValueTS\",\"type\":\"histogram\",\"params\":{\"type\":\"histogram\",\"grid\":{\"categoryLines\":false,\"style\":{\"color\":\"#eee\"}},\"categoryAxes\":[{\"id\":\"CategoryAxis-1\",\"type\":\"category\",\"position\":\"bottom\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\"},\"labels\":{\"show\":true,\"truncate\":100},\"title\":{}}],\"valueAxes\":[{\"id\":\"ValueAxis-1\",\"name\":\"LeftAxis-1\",\"type\":\"value\",\"position\":\"left\",\"show\":true,\"style\":{},\"scale\":{\"type\":\"linear\",\"mode\":\"normal\"},\"labels\":{\"show\":true,\"rotate\":0,\"filter\":false,\"truncate\":100},\"title\":{\"text\":\"Average metric_es_value\"}}],\"seriesParams\":[{\"show\":true,\"mode\":\"stacked\",\"type\":\"histogram\",\"drawLinesBetweenPoints\":true,\"showCircles\":true,\"data\":{\"id\":\"2\",\"label\":\"Average metric_es_value\"},\"valueAxis\":\"ValueAxis-1\"}],\"addTooltip\":true,\"addLegend\":true,\"legendPosition\":\"right\",\"times\":[],\"addTimeMarker\":false},\"aggs\":[{\"id\":\"2\",\"enabled\":true,\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"metric_es_value\"}},{\"id\":\"3\",\"enabled\":true,\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"datetime\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}]}"
+            }
+        },
+        {
+            "id": "1dc2b830-ac7d-11e8-beb2-277ea76a535b",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\n  \"index\": \"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\n  \"filter\": [],\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"lucene\"\n  }\n}"
+                },
+                "title": "ScavaMetricValueSumTS",
+                "uiStateJSON": "{}",
+                "version": 1,
+                "visState": "{\n  \"title\": \"ScavaMetricValueSumTS\",\n  \"type\": \"histogram\",\n  \"params\": {\n    \"type\": \"histogram\",\n    \"grid\": {\n      \"categoryLines\": false,\n      \"style\": {\n        \"color\": \"#eee\"\n      }\n    },\n    \"categoryAxes\": [\n      {\n        \"id\": \"CategoryAxis-1\",\n        \"type\": \"category\",\n        \"position\": \"bottom\",\n        \"show\": true,\n        \"style\": {},\n        \"scale\": {\n          \"type\": \"linear\"\n        },\n        \"labels\": {\n          \"show\": true,\n          \"truncate\": 100\n        },\n        \"title\": {}\n      }\n    ],\n    \"valueAxes\": [\n      {\n        \"id\": \"ValueAxis-1\",\n        \"name\": \"LeftAxis-1\",\n        \"type\": \"value\",\n        \"position\": \"left\",\n        \"show\": true,\n        \"style\": {},\n        \"scale\": {\n          \"type\": \"linear\",\n          \"mode\": \"normal\"\n        },\n        \"labels\": {\n          \"show\": true,\n          \"rotate\": 0,\n          \"filter\": false,\n          \"truncate\": 100\n        },\n        \"title\": {\n          \"text\": \"Sum of metric_es_value\"\n        }\n      }\n    ],\n    \"seriesParams\": [\n      {\n        \"show\": true,\n        \"mode\": \"stacked\",\n        \"type\": \"histogram\",\n        \"drawLinesBetweenPoints\": true,\n        \"showCircles\": true,\n        \"data\": {\n          \"id\": \"2\",\n          \"label\": \"Sum of metric_es_value\"\n        },\n        \"valueAxis\": \"ValueAxis-1\"\n      }\n    ],\n    \"addTooltip\": true,\n    \"addLegend\": true,\n    \"legendPosition\": \"right\",\n    \"times\": [],\n    \"addTimeMarker\": false\n  },\n  \"aggs\": [\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"sum\",\n      \"schema\": \"metric\",\n      \"params\": {\n        \"field\": \"metric_es_value\"\n      }\n    },\n    {\n      \"id\": \"3\",\n      \"enabled\": true,\n      \"type\": \"date_histogram\",\n      \"schema\": \"segment\",\n      \"params\": {\n        \"field\": \"datetime\",\n        \"interval\": \"auto\",\n        \"customInterval\": \"2h\",\n        \"min_doc_count\": 1,\n        \"extended_bounds\": {}\n      }\n    }\n  ]\n}"
+            }
+        },
+        {
+            "id": "632e2030-acdc-11e8-beb2-277ea76a535b",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\n  \"index\": \"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\n  \"filter\": [],\n  \"query\": {\n    \"query\": \"\",\n    \"language\": \"lucene\"\n  }\n}"
+                },
+                "title": "ScavaMetricType",
+                "uiStateJSON": "{\n  \"vis\": {\n    \"params\": {\n      \"sort\": {\n        \"columnIndex\": null,\n        \"direction\": null\n      }\n    }\n  }\n}",
+                "version": 1,
+                "visState": "{\n  \"title\": \"ScavaMetricType\",\n  \"type\": \"table\",\n  \"params\": {\n    \"perPage\": 10,\n    \"showPartialRows\": false,\n    \"showMeticsAtAllLevels\": false,\n    \"sort\": {\n      \"columnIndex\": null,\n      \"direction\": null\n    },\n    \"showTotal\": false,\n    \"totalFunc\": \"sum\"\n  },\n  \"aggs\": [\n    {\n      \"id\": \"1\",\n      \"enabled\": true,\n      \"type\": \"count\",\n      \"schema\": \"metric\",\n      \"params\": {\n        \"customLabel\": \"Samples\"\n      }\n    },\n    {\n      \"id\": \"2\",\n      \"enabled\": true,\n      \"type\": \"terms\",\n      \"schema\": \"bucket\",\n      \"params\": {\n        \"field\": \"metric_type\",\n        \"otherBucket\": false,\n        \"otherBucketLabel\": \"Other\",\n        \"missingBucket\": false,\n        \"missingBucketLabel\": \"Missing\",\n        \"size\": 10,\n        \"order\": \"desc\",\n        \"orderBy\": \"1\",\n        \"customLabel\": \"Metric Type\"\n      }\n    }\n  ]\n}"
+            }
+        },
+        {
+            "id": "46ecb0f0-7ce6-11e9-90b8-953deda2e5b5",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\"index\":\"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+                },
+                "title": "max-metric-es-value",
+                "uiStateJSON": "{}",
+                "version": 1,
+                "visState": "{\"title\":\"max-metric-es-value\",\"type\":\"metric\",\"params\":{\"addTooltip\":true,\"addLegend\":false,\"type\":\"metric\",\"metric\":{\"percentageMode\":false,\"useRanges\":false,\"colorSchema\":\"Green to Red\",\"metricColorMode\":\"None\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"labels\":{\"show\":true},\"invertColors\":false,\"style\":{\"bgFill\":\"#000\",\"bgColor\":false,\"labelColor\":false,\"subText\":\"\",\"fontSize\":20}}},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"metric_es_value\",\"customLabel\":\"Max metric values\"}}]}"
+            }
+        },
+        {
+            "id": "c081b8c0-7ce6-11e9-90b8-953deda2e5b5",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\"index\":\"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+                },
+                "title": "avg-metric-value",
+                "uiStateJSON": "{}",
+                "version": 1,
+                "visState": "{\"title\":\"avg-metric-value\",\"type\":\"metric\",\"params\":{\"addTooltip\":true,\"addLegend\":false,\"type\":\"metric\",\"metric\":{\"percentageMode\":false,\"useRanges\":false,\"colorSchema\":\"Green to Red\",\"metricColorMode\":\"None\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"labels\":{\"show\":true},\"invertColors\":false,\"style\":{\"bgFill\":\"#000\",\"bgColor\":false,\"labelColor\":false,\"subText\":\"\",\"fontSize\":20}}},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"avg\",\"schema\":\"metric\",\"params\":{\"field\":\"metric_es_value\",\"customLabel\":\"Avg metric values\"}}]}"
+            }
+        },
+        {
+            "id": "55885b40-7ce7-11e9-90b8-953deda2e5b5",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\"index\":\"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+                },
+                "title": "sum-metric-value",
+                "uiStateJSON": "{}",
+                "version": 1,
+                "visState": "{\"title\":\"sum-metric-value\",\"type\":\"metric\",\"params\":{\"addTooltip\":true,\"addLegend\":false,\"type\":\"metric\",\"metric\":{\"percentageMode\":false,\"useRanges\":false,\"colorSchema\":\"Green to Red\",\"metricColorMode\":\"None\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"labels\":{\"show\":true},\"invertColors\":false,\"style\":{\"bgFill\":\"#000\",\"bgColor\":false,\"labelColor\":false,\"subText\":\"\",\"fontSize\":20}}},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"metric_es_value\",\"customLabel\":\"Sum metric values\"}}]}"
+            }
+        },
+        {
+            "id": "83bec270-7ce6-11e9-90b8-953deda2e5b5",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\"index\":\"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+                },
+                "title": "min-metric-value",
+                "uiStateJSON": "{}",
+                "version": 1,
+                "visState": "{\"title\":\"min-metric-value\",\"type\":\"metric\",\"params\":{\"addTooltip\":true,\"addLegend\":false,\"type\":\"metric\",\"metric\":{\"percentageMode\":false,\"useRanges\":false,\"colorSchema\":\"Green to Red\",\"metricColorMode\":\"None\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"labels\":{\"show\":true},\"invertColors\":false,\"style\":{\"bgFill\":\"#000\",\"bgColor\":false,\"labelColor\":false,\"subText\":\"\",\"fontSize\":20}}},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"min\",\"schema\":\"metric\",\"params\":{\"field\":\"metric_es_value\",\"customLabel\":\"Min metric values\"}}]}"
+            }
+        },
+        {
+            "id": "bea4c5f0-7ce7-11e9-90b8-953deda2e5b5",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{\"index\":\"ea1313b0-8f29-11e8-a362-0d37aacd7dee\",\"filter\":[],\"query\":{\"query\":\"\",\"language\":\"lucene\"}}"
+                },
+                "title": "median-metric-value",
+                "uiStateJSON": "{}",
+                "version": 1,
+                "visState": "{\"title\":\"median-metric-value\",\"type\":\"metric\",\"params\":{\"addTooltip\":true,\"addLegend\":false,\"type\":\"metric\",\"metric\":{\"percentageMode\":false,\"useRanges\":false,\"colorSchema\":\"Green to Red\",\"metricColorMode\":\"None\",\"colorsRange\":[{\"from\":0,\"to\":10000}],\"labels\":{\"show\":true},\"invertColors\":false,\"style\":{\"bgFill\":\"#000\",\"bgColor\":false,\"labelColor\":false,\"subText\":\"\",\"fontSize\":20}}},\"aggs\":[{\"id\":\"1\",\"enabled\":true,\"type\":\"median\",\"schema\":\"metric\",\"params\":{\"field\":\"metric_es_value\",\"percents\":[50],\"customLabel\":\"Median metric values\"}}]}"
+            }
+        },
+        {
+            "id": "bb5443d0-1102-11ea-860d-0de674299f36",
+            "value": {
+                "description": "",
+                "kibanaSavedObjectMeta": {
+                    "searchSourceJSON": "{}"
+                },
+                "title": "about-project-dashboard",
+                "uiStateJSON": "{}",
+                "version": 1,
+                "visState": "{\"title\":\"about-project-dashboard\",\"type\":\"markdown\",\"params\":{\"fontSize\":12,\"markdown\":\"# About the Project Dashboard\\n\\nThe Project Dashboard (dev/debug) shows all the metrics available in CROSSMINER, fetched from the SCAVA API. It displays the global value and the evolution in time of the metrics. It includes also filters to ease the analysis of a specific group of metrics. The dashboard is composed of different tables and visualizations. The Project Dashboard (dev/debug) allows understanding the SCAVA metrics in terms of global and time values\\n\\nThis dashboard uses the next endpoints:\\n- */projects*\\n- */metrics/p/project-name*\\n- */projects/p/project-name/m/metric-name*\\n\\nMore information about the metrics used, [here](https://scava-docs.readthedocs.io/en/latest/others/users/Scava-Metrics/)\",\"openLinksInNewTab\":false},\"aggs\":[]}"
+            }
+        }
+    ]
+}

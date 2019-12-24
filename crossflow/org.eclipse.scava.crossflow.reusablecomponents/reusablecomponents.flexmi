@@ -1,0 +1,51 @@
+<?nsuri org.eclipse.scava.crossflow.components?>
+
+<_>
+		
+	<!-- comment on component -->
+	<component 
+	fullyQualifiedName="org.eclipse.scava.crossflow.reusablecomponents.githubsearch.CodeSearcherTaskDefinition"
+	multipleOutputs="true"
+	>
+	
+	<consumes>
+	<type name="Technology">
+		<datafield name="techKey" type="String"/>
+		<datafield name="fileExt" type="String"/>
+	</type>
+	</consumes>
+	
+	<produces>
+	<type name="Repository">
+		<datafield name="fullName" type="String"/>
+		<datafield name="htmlUrl" type="String"/>
+	</type>
+	</produces>
+	
+	</component>
+	
+	<!-- comment on component -->
+	<component 
+	fullyQualifiedName="org.eclipse.scava.crossflow.reusablecomponents.githubsearch.RepositorySearcherTaskDefinition"
+	multipleOutputs="false"
+	componentType="opinionated"
+	>
+	
+	<consumes>
+	<type name="RepoTechPair" extends="Repository">
+		<datafield name="tech" type="Technology"/>
+	</type>
+	</consumes>
+	
+	<produces>
+	<type name="AnalysisResult">
+		<datafield name="fileCount" type="int"/>
+		<datafield name="authorCount" type="int"/>
+		<datafield name="repository" type="Repository"/>
+		<datafield name="technology" type="Technology"/>
+	</type>
+	</produces>
+	
+	</component>
+	
+</_>

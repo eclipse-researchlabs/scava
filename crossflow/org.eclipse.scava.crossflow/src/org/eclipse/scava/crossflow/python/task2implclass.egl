@@ -1,0 +1,68 @@
+[%import "../util.eol";
+import "pythonUtil.eol";
+
+if (t.isSource()){%]
+import threading
+
+[%}%]
+from crossflow.[%=package%].[%=t.name.toSnakeCaseLower()%] import [%=t.name%]Base
+
+[% for(i in t.output.collect(i|i.type).asOrderedSet().sortBy(i|i.name)) {%]
+from crossflow.[%=package%].[%=i.name.toSnakeCaseLower()%] import [%=i.name%]
+[%}%]
+
+
+class [%=t.name%]([%=t.name%]Base):
+
+    def __init__(self):
+        super().__init__()
+
+    [% // This is a source task
+    if (t.isSource()){%]
+    [%=t.genSource()%]
+    [%} 
+    // This is a consuming task
+    else {%]
+        [% for (i in t.input) {%]
+    [%=i.genConsume(t.isSingleOut())%]
+        [%}
+    }
+
+
+@template
+operation Type genSource() {%]
+def produce(self):
+    def run():
+    [%for (o in self.output) {%]
+        [%=o.genResult(true)%]
+        
+    [%}%]
+        threading.Timer(100, run).start()
+    run()
+[%}
+
+@template
+operation Stream genConsume(send : Boolean) {%]
+def consume[%=self.name%](self, [%=self.type.pyVarName()%]: [%=self.type.name%]):
+    print(f"{self.workflow.name}:[%=t.name%]:consume[%=self.name%] received {[%=self.type.pyVarName()%]}")
+    
+    # Do work here
+    
+    [%for (o in t.output) {%]
+    [%=o.genResult(send)%]
+
+    [%}%]
+
+[%}
+
+@template
+operation Stream genResult(send : Boolean) {
+    var result = self.pyVarName() + "_" + self.type.pyVarName();%]
+[%=result%] = [%=self.type.name%]()
+# modify your result here
+    [%if (send) {%]
+self.sendTo[%=self.name%]([%=result%])
+    [%} else {%]
+return [%=self.name%]
+[%    }
+}%]

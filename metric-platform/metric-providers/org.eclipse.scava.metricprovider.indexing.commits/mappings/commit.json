@@ -1,0 +1,57 @@
+{
+	"_meta" : {
+		"mapping_version" : "1.2"
+	},
+	"properties" : {
+		"created_at" : {
+			"type" : "date"
+		},
+		"project_name" : {
+		"type" : "keyword"
+		},
+		"uid" : {
+			"type" : "text"
+		},
+		"repository" : {
+			"type" : "keyword"
+		},
+		"revision" : {
+			"type" : "keyword"
+		},
+		"creator" : {
+			"type" : "keyword"
+		},
+		"creator_email" : {
+			"type" : "keyword"
+		},
+		"body" : {
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		},
+		"plain_text" : {
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		},
+		"referring_to" : {
+			"properties" : {
+				"bugs" : {
+					"type" : "text"
+				},
+				"commits" : { 
+					"type" : "text"
+				}
+			}
+		}	
+	}
+	
+}

@@ -1,0 +1,57 @@
+{
+	"metricid" : "org.eclipse.scava.metricprovider.historic.newsgroups.responsetime.ResponseTimeHistoricMetricProvider",
+	"vis" : [ 
+		{
+			"id" : "newsgroups.averageResponseTime",
+			"name" : "Newsgroup Average Response Time (s)",
+			"description" : "The average response time of threads addressed every day." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Response Time", "field" : "$avgResponseTime" } ]
+			},
+			"x" : "Date",
+			"y" : "Response Time",
+			"timeSeries" : true
+		},{
+			"id" : "newsgroups.averageResponseTime-threads",
+			"name" : "Newsgroup Average Response Time per Thread (s)",
+			"description" : "The average response time of threads addressed every day, in relation to the number of threads considered." ,
+			"type" : "ScatterChart",
+			"datatable" : {
+				"cols" : [ { "name" : "Date", "field" : "$__date" },
+					{ "name" : "Threads", "field" : "$threadsConsidered" }, 
+					{ "name" : "Response Time", "field" : "$avgResponseTime" } ]
+			},
+			"x" : "Threads",
+			"y" : "Response Time",
+			"timeSeries" : false
+		},{
+			"id" : "newsgroups.cumulativeAverageResponseTime",
+			"name" : "Newsgroup Average Response Time (Cumulative) (s)",
+			"description" : "The average response time of threads addressed up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Response Time", "field" : "$cumulativeAvgResponseTime" } ]
+			},
+			"x" : "Date",
+			"y" : "Response Time",
+			"timeSeries" : true
+		},{
+			"id" : "newsgroups.cumulativeAverageResponseTime-threads",
+			"name" : " Newsgroup Average Response Time per Thread (Cumulative) (s)",
+			"description" : "The average response time of threads addressed up to and including the current date, in relation to the number of threads considered." ,
+			"type" : "ScatterChart",
+			"datatable" : {
+				"cols" : [ { "name" : "Date", "field" : "$__date" },
+					{ "name" : "Threads", "field" : "$threadsConsidered" }, 
+					{ "name" : "Response Time", "field" : "$cumulativeAvgResponseTime" } ]
+			},
+			"x" : "Threads",
+			"y" : "Response Time",
+			"timeSeries" : false
+		}
+	]
+
+}

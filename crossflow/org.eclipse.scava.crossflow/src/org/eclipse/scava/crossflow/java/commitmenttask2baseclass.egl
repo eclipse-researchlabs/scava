@@ -1,0 +1,87 @@
+[%import "task2baseclass.egl";%]
+package [%=package%];
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Generated;
+
+import org.eclipse.scava.crossflow.runtime.FailedJob;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+[%
+for(i in imports){%]
+import [%=i%].*;
+[%}%]
+
+@Generated(value = "org.eclipse.scava.crossflow.java.[%=genRule%]"[% if (genDate.isDefined()) { %], date = "[%=genDate%]"[%}%])
+public abstract class Commitment[%=t.name%]Base extends [%=t.name%]Base {
+	
+	protected volatile int rejections = 0;
+	protected volatile int occurences = 0;
+	protected Map<String,Integer> seen = new ConcurrentHashMap<>();
+	protected Set<String> commitments = ConcurrentHashMap.newKeySet();	
+	
+	[%for (s in t.input) { %]
+	
+		[%if(s.isConfigurationChannel()){%]
+	boolean hasProcessed[%=s.name%] = false;
+	[%}%]
+	
+[%=s.createStartOfConsumeMethod()%]
+		[%if(not s.isConfigurationChannel() and (not t.multipleOutputs and t.output.size==1)) {%]
+				[%=t.output.first.type.name%] result = null;
+				if (commitments.contains([%=s.type.name.ftlc()%].getName())) {
+					occurences++;
+					result = consume[%=s.name%]([%=s.type.name.ftlc()%]);
+				} else if (seen.containsKey([%=s.type.name.ftlc()%].getJobId()) && seen.get([%=s.type.name.ftlc()%].getJobId())>=[%=t.commitAfter%]) {
+					commitments.add([%=s.type.name.ftlc()%].getJobId());
+					result = consume[%=s.name%]([%=s.type.name.ftlc()%]);
+				} else {
+					if(!seen.containsKey([%=s.type.name.ftlc()%].getJobId()))
+						seen.put([%=s.type.name.ftlc()%].getJobId(),1);
+					seen.put([%=s.type.name.ftlc()%].getJobId(),seen.get([%=s.type.name.ftlc()%].getJobId())+1);
+					rejections++;
+					workflow.get[%=s.name%]().send([%=s.type.name.ftlc()%],this.getClass().getName());
+				}			
+				if(result != null){
+					result.setTransactional(false);
+					sendTo[%=t.output.first.name%](result);
+				}
+		[%}else if(not s.isConfigurationChannel()){%]
+				if (commitments.contains([%=s.type.name.ftlc()%].getName())) {
+					occurences++;
+					consume[%=s.name%]([%=s.type.name.ftlc()%]);
+				} else if (seen.containsKey([%=s.type.name.ftlc()%].getJobId()) && seen.get([%=s.type.name.ftlc()%].getJobId())>=[%=t.commitAfter%]) {
+					commitments.add([%=s.type.name.ftlc()%].getJobId());
+					consume[%=s.name%]([%=s.type.name.ftlc()%]);
+				} else {
+					if(!seen.containsKey([%=s.type.name.ftlc()%].getJobId()))
+						seen.put([%=s.type.name.ftlc()%].getJobId(),1);
+					seen.put([%=s.type.name.ftlc()%].getJobId(),seen.get([%=s.type.name.ftlc()%].getJobId())+1);
+					rejections++;
+					workflow.get[%=s.name%]().send([%=s.type.name.ftlc()%],this.getClass().getName());
+				}				
+[%if(not s.isConfigurationChannel()){%][%=s.sendConfirmationMessage()%]
+		[%}}else{%]
+				consume[%=s.name%]([%=s.type.name.ftlc()%]);
+[%}%]
+[%=s.createEndOfConsumeMethod()%]
+	[%}%]
+
+	public int getRejections() {
+		return rejections;
+	}
+
+	public int getOccurences() {
+		return occurences;
+	}
+	
+	public int getCommitmentSize() {
+		return commitments.size();
+	}
+
+}

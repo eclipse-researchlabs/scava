@@ -1,0 +1,37 @@
+{
+	"metricid" : "org.eclipse.scava.metricprovider.historic.documentation.sentiment.DocumentationSentimentHistoricMetricProvider",
+	"vis" : [ 
+		{
+			"id" : "documentation.sentiment.entries",
+			"name" : "Documentation Entries Sentiment",
+			"description" : "The sentiment of each documentation entry",
+			"type" : "LineChart",
+			"datatable" : {
+				"rows" : "$documentationEntriesSentiment",
+				"cols" : [  { "name" : "Date", "field" : "$__date" },
+					{ "name" : "Entry name", "field" : "$entryId"}, 
+					{ "name" : "Sentiment", "field" : "$polarity" }]
+			},
+			"x" : "Date",
+			"y" : "Sentiment", 
+			"series" : "Sentiment",
+			"timeSeries" : true
+		},
+		{
+			"id" : "documentation.sentiment",
+			"name" : "Doucmentation Average Sentiment",
+			"description" : "The average documentation sentiment",
+			"type" : "LineChart",
+			"datatable" : {
+				"rows" : "$documentationSentiment",
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Average Sentiment", "field" : "$averageDocumentationSentiment" },
+					{ "name" : "Number of Documentation Entries", "field" : "$numberOfDocumentationEntries" } ]
+			},
+			"x" : "Date",
+			"y" : "Number of Documentation Entries", 
+			"series" : "Sentiment",
+			"timeSeries" : true
+		}
+	]
+}

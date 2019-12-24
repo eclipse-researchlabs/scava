@@ -1,0 +1,57 @@
+{
+	"_meta" : {
+		"mapping_version" : "1.1"
+	},
+	"properties" : {
+		"created_at" : { 
+			"type" : "date"
+		},
+		"subject" : {
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		},
+		"severity" : {
+			"type" : "keyword"
+		},
+		"bug_id" : {
+			"type" : "keyword"
+		},
+		"project_name" : {
+			"type" : "keyword"
+		},
+		"creator" : {
+			"type" : "keyword"
+		},
+		"uid" : {
+			"type" : "keyword"
+		},
+		"migration_issue" : {
+			"properties" : {
+				"found" : {
+					"type" : "boolean"
+				},
+				"problematic_changes" : {
+					"properties" : {
+						"change" : {
+							"type" : "text",
+							"fields": {
+						    	"keyword": {
+						        	"type": "keyword",
+						        	"ignore_above": 256
+						      	}
+						    }
+						},
+						"matching_score" : {
+							"type" : "double"
+						}
+					}
+				}
+			}
+		}
+	}
+}

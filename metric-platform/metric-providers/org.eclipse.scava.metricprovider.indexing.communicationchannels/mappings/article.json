@@ -1,0 +1,70 @@
+{
+	"_meta" : {
+		"mapping_version" : "1.1"
+	},
+	"properties" : {
+		"article_id" : {
+			"type" : "keyword"
+		},
+		"communication_channel_id" : {
+			"type" : "keyword"
+		},
+		"thread_id" : {
+			"type" : "keyword"
+		},
+		"uid" : {
+			"type" : "keyword"
+		},
+		"project_name" : {
+			"type" : "keyword"
+		},
+		"body" : {
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		},
+		"subject" : {
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		},
+		"creator" : {
+			"type" : "keyword"
+		},
+		"created_at" : {
+			"type" : "date"
+		},
+		"emotional_dimension" : {
+			"type" : "keyword"
+		},
+		"sentiment" : {
+			"type" : "keyword"
+		},
+		"plain_text" : {
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		},
+		"request_reply_classification" : {
+			"type" : "keyword"
+		},
+		"content_class" : {
+			"type" : "keyword"
+		},
+		"contains_code" : {
+			"type" : "boolean"
+		}
+	}
+}

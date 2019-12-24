@@ -1,0 +1,12 @@
+package org.eclipse.scava.metricprovider.historic.bugs.responsetime.model;
+
+class BugsResponseTimeHistoricMetric {
+	attr String bugTrackerId;
+   	attr double avgResponseTime;
+   	attr String avgResponseTimeFormatted;
+	attr int bugsConsidered;
+   	attr double cumulativeAvgResponseTime;
+   	attr String cumulativeAvgResponseTimeFormatted;
+	attr int cumulativeBugsConsidered;
+}
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.scava.platform.managers.communicationchannel">
+      <communicationChannel
+            manager="org.eclipse.scava.platform.communicationchannel.nntp.NntpManager">
+      </communicationChannel>
+   </extension>
+
+	<extension point="com.googlecode.pongo.runtime.osgi">
+    	<class name="org.eclipse.scava.platform.communicationchannel.nntp.model.NntpDataManager"/>
+    	<class name="org.eclipse.scava.platform.communicationchannel.nntp.model.NntpDatum"/>
+  </extension>
+</plugin>

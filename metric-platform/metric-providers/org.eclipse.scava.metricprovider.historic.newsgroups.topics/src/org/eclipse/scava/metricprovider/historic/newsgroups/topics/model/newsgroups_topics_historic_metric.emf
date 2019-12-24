@@ -1,0 +1,13 @@
+package org.eclipse.scava.metricprovider.historic.newsgroups.topics.model;
+
+class NewsgroupTopicsHistoricMetric {
+	val NewsgrpTopic[*] newsgrpTopics;
+}
+
+class NewsgrpTopic {
+	@searchable
+   	attr String newsgroupName;
+   	attr String[*] labels;
+   	attr int numberOfDocuments;
+   	attr String[*] articlesId;
+}

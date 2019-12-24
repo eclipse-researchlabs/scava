@@ -1,0 +1,23 @@
+package org.eclipse.scava.metricprovider.trans.sentimentclassification.model;
+
+@db(qualifiedCollectionNames="true")
+@customize
+class SentimentClassificationTransMetric {
+	val BugTrackerCommentsSentimentClassification[*] bugTrackerComments;
+	val NewsgroupArticlesSentimentClassification[*] newsgroupArticles;
+}
+
+class BugTrackerCommentsSentimentClassification {
+	@searchable
+   	attr String bugTrackerId;
+   	attr String bugId;
+   	attr String commentId;
+   	attr String polarity;
+}
+
+class NewsgroupArticlesSentimentClassification {
+	@searchable
+   	attr String newsGroupName;
+   	attr String articleId;
+   	attr String polarity;
+}

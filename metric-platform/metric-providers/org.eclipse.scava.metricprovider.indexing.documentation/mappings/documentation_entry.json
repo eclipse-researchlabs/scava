@@ -1,0 +1,87 @@
+{
+	"_meta" : {
+		"mapping_version" : "1.1"
+	},
+	"properties" : {
+		"created_at" : {
+			"type" : "date"
+		},
+		"project_name" : {
+		"type" : "keyword"
+		},
+		"uid" : {
+			"type" : "keyword"
+		},
+		"documentation_id" : {
+			"type" : "keyword"
+		},
+		"documentation_entry_id" : {
+			"type" : "keyword"
+		},
+		"body" : {
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		},
+		"original_format_mime" : {
+			"type" : "keyword"
+		},
+		"original_format_name" : {
+			"type" : "keyword"
+		},
+		"plain_text" : {
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		},
+		"sentiment" : {
+			"type" : "keyword"
+		},
+		"readability" : {
+			"type" : "double"
+		},
+		"documentation_type" : {
+			"type" : "keyword"
+		},
+		"license_found" : {
+			"type" : "boolean"
+		},
+		"license" : {
+			"properties": {
+				"group" : {
+					"type" : "keyword"
+				},
+				"name" : {
+					"type" : "keyword"
+				},
+				"header_found": {
+					"type" : "boolean"
+				},
+				"score": {
+					"type" : "double"
+				},
+				"is_deprecated_license": {
+					"type" : "boolean"
+				},
+				"is_fsf_libre": {
+					"type" : "boolean"
+				},
+				"is_osi_approved": {
+					"type" : "boolean"
+				},
+				"license_comments": {
+					"type" : "text"
+				}
+			}
+			
+		}
+	}
+}

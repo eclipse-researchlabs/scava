@@ -1,0 +1,49 @@
+<div>
+  <div class="page-header">
+    <h2>Metric Providers</h2>
+    <hr />
+  </div>
+  <div>
+    <p>Full documentation of the metrics is available <a href="https://scava-docs.readthedocs.io/en/latest/user-guide/metrics/" target="_blank">here</a>.</p>
+  </div>
+  <div *ngIf="showSpinner; else other_case;" class="d-flex justify-content-center">
+    <mat-spinner></mat-spinner>
+  </div>
+  <ng-template #other_case>
+    <mat-form-field class="example-header">
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+
+    <div class="example-container mat-elevation-z8">
+      <table mat-table [dataSource]="dataSource" matSort>
+
+        <ng-container matColumnDef="kind">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Kind </th>
+          <td mat-cell *matCellDef="let element"> {{element.kind}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="label">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Label </th>
+          <td mat-cell *matCellDef="let element"> {{element.label}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
+          <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="dependOf">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header> Depend Of </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-list>
+              <mat-list-item *ngFor="let d of element.dependOf">{{d.label}}</mat-list-item>
+            </mat-list>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </ng-template>
+</div>

@@ -1,0 +1,21 @@
+{
+	"metricid" : "org.eclipse.scava.metricprovider.historic.newsgroups.migrationissues.NewsgroupsMigrationIssueHistoricMetricProvider",
+	"vis" : [ 
+		{
+			"id" : "newsgroups.dailymigrationissues",
+			"name" : "NewsgroupsMigrationIssues (daily)",
+			"description" : "The number of newsgroup migration issues per day, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"rows" : "$dailyNewsgroupsMigrationData",
+				"cols" : [  { "name" : "Date", "field" : "$__date" },
+					{ "name" : "NewsgroupName", "field" : "$newsgroupName"},
+					{ "name" : "MigrationIssues", "field" : "$numberOfIssues" },
+					{ "name" : "ThreadsID", "field" : "$threadId"} ]
+			},
+			"x" : "Date",
+			"y" : "MigrationIssues",
+			"timeSeries" : true
+		}
+	]
+}

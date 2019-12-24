@@ -1,0 +1,51 @@
+{
+	"_meta" : {
+		"mapping_version" : "1.1"
+	},
+	"properties" : {
+		"communication_channel_id" : {
+			"type" : "keyword"
+		},
+		"thread_id" : {
+			"type" : "keyword"
+		},
+		"uid" : {
+			"type" : "keyword"
+		},
+		"project_name" : {
+			"type" : "keyword"
+		},
+		"subject" : {
+			"type" : "text",
+			"fields": {
+		    	"keyword": {
+		        	"type": "keyword",
+		        	"ignore_above": 256
+		      	}
+		    }
+		},
+		"migration_issue" : {
+			"properties" : {
+				"found" : {
+					"type" : "boolean"
+				},
+				"problematic_changes" : {
+					"properties" : {
+						"change" : {
+							"type" : "text",
+							"fields": {
+						    	"keyword": {
+						        	"type": "keyword",
+						        	"ignore_above": 256
+						      	}
+						    }
+						},
+						"matching_score" : {
+							"type" : "double"
+						}
+					}
+				}
+			}
+		}
+	}
+}

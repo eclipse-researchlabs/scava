@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2017 University of Manchester
+  
+  This program and the accompanying materials are made
+  available under the terms of the Eclipse Public License 2.0
+  which is available at https://www.eclipse.org/legal/epl-2.0/
+  
+  SPDX-License-Identifier: EPL-2.0
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+	    <groupId>org.apache.opennlp</groupId>
+	    <artifactId>opennlp</artifactId>
+	    <version>1.5.1-incubating</version>
+	    <relativePath>../opennlp/pom.xml</relativePath>
+    </parent>
+  
+	<artifactId>opennlp-maxent</artifactId>
+	<packaging>jar</packaging>
+	<version>3.0.1-incubating</version>
+	<name>OpenNLP Maxent</name>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.rat</groupId>
+				<artifactId>apache-rat-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<configuration>
+							<excludes>
+								<exclude>META-INF/MANIFEST.MF</exclude>
+								<exclude>samples/sports/*.test</exclude> <!-- sample data -->
+								<exclude>src/main/java/opennlp/maxent/AllEnglishAffixes.txt</exclude> <!-- test data -->
+								<exclude>src/test/resources/data/opennlp/maxent/io/*.txt</exclude> <!-- test data -->
+								<exclude>src/test/resources/data/opennlp/maxent/*.txt</exclude> <!-- test data -->
+							</excludes>              
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>		
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,119 @@
+{
+	"metricid" : "org.eclipse.scava.metricprovider.historic.bugs.bugs.BugsHistoricMetricProvider",
+	"vis" : [ 
+		{
+			"id" : "bugs.bugs",
+			"name" : "Bugs",
+			"description" : "The number of bugs per day, that have been submitted, updated or commented up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" },
+					{ "name" : "Bugs", "field" : "$numberOfBugs" } ]
+			},
+			"x" : "Date",
+			"y" : "Bugs",
+			"timeSeries" : true
+		},{
+			"id" : "bugs.requestsreplies-useraverage",
+			"name" : "Bug Comments, Requests and Replies Per User",
+			"description" : "The average number of comments, requests and replies per user, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" },
+					{ "name" : "Comments", "field" : "$averageCommentsPerUser" },
+					{ "name" : "Requests", "field" : "$averageRequestsPerUser" },
+					{ "name" : "Replies", "field" : "$averageRepliesPerUser" } ]
+			},
+			"x" : "Date",
+			"y" : ["Comments", "Requests", "Replies"],
+			"timeSeries" : true
+		},{
+			"id" : "bugs.requests-useraverage",
+			"name" : "Bug Requests Per User",
+			"description" : "The average number of requests per user, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Requests", "field" : "$averageRequestsPerUser" } ]
+			},
+			"x" : "Date",
+			"y" : "Requests",
+			"timeSeries" : true
+		},{
+			"id" : "bugs.comments-useraverage",
+			"name" : "Bug Comments Per User",
+			"description" : "The average number of comments per user, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : { 
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Comments", "field" : "$averageCommentsPerUser" } ]
+			},
+			"x" : "Date",
+			"y" : "Comments",
+			"timeSeries" : true
+		},{
+			"id" : "bugs.replies-useraverage",
+			"name" : "Bug Replies Per User",
+			"description" : "The average number of replies per user, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : { 
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Replies", "field" : "$averageRepliesPerUser" } ]
+			},
+			"x" : "Date",
+			"y" : "Replies",
+			"timeSeries" : true
+		},{
+			"id" : "bugs.requestsreplies-bugaverage",
+			"name" : "Average Comments, Requests and Replies Per Bug",
+			"description" : "The average number of comments, requests and replies per bug, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" },
+					{ "name" : "Comments", "field" : "$averageCommentsPerBug" },
+					{ "name" : "Requests", "field" : "$averageRequestsPerBug" },
+					{ "name" : "Replies", "field" : "$averageRepliesPerBug" } ]
+			},
+			"x" : "Date",
+			"y" : ["Comments", "Requests", "Replies"],
+			"timeSeries" : true
+		},{
+			"id" : "bugs.requests-bugaverage",
+			"name" : "Average Requests Per Bug",
+			"description" : "The average number of requests per bug, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Requests", "field" : "$averageRequestsPerBug" } ]
+			},
+			"x" : "Date",
+			"y" : "Requests",
+			"timeSeries" : true
+		},{
+			"id" : "bugs.comments-bugaverage",
+			"name" : "Average Comments Per Bug",
+			"description" : "The average number of comments per bug, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : { 
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Comments", "field" : "$averageCommentsPerBug" } ]
+			},
+			"x" : "Date",
+			"y" : "Comments",
+			"timeSeries" : true
+		},{
+			"id" : "bugs.replies-bugaverage",
+			"name" : "Average Replies Per Bug",
+			"description" : "The average number of replies per bug, up to and including the current date." ,
+			"type" : "LineChart",
+			"datatable" : { 
+				"cols" : [  { "name" : "Date", "field" : "$__date" }, 
+					{ "name" : "Replies", "field" : "$averageRepliesPerBug" } ]
+			},
+			"x" : "Date",
+			"y" : "Replies",
+			"timeSeries" : true
+		}
+	]
+
+}

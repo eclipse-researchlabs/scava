@@ -1,0 +1,178 @@
+[%import "../util.eol";
+import "javaUtil.eol";%]
+package [%=package%];
+
+import javax.annotation.Generated;
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.ArrayList;
+import org.eclipse.scava.crossflow.runtime.Job;
+[%
+for(i in imports){%]
+import [%=i%].*;
+[%}
+
+// Annotate fields with appropriate type mappings
+for (f in t.allFields()) f.annotateType();
+%]
+
+@Generated(value = "org.eclipse.scava.crossflow.java.[%=genRule%]"[% if (genDate.isDefined()) { %], date = "[%=genDate%]"[%}%])
+public class [%=t.name%] [%if(t.isJob()){%] extends [%if(t.extending.isUndefined()){%]Job[%}else{%][%=t.extending.name%][%}}else{%] implements Serializable[%}%] {
+		
+	[%=t.genFieldDeclarations()%]
+	
+	[%=t.genConstructors()%]
+	
+	[%=t.genFieldMethods()%]
+	
+	public Object[] toObjectArray() {
+		Object[] ret = new Object[[%=t.fields.size%]];
+	[%var i = 0; for (f in t.fields) { %]
+	 	ret[[%=i%]] = get[%=f.name.ftuc()%]();
+	[%i++;}%]
+		return ret;
+	}
+	
+	public String toString() {
+		[%
+		var fields = t.fields.name;
+		for(n in t.closure(e|e.extending).fields.flatten.name)
+			fields = fields.including("get"+n.ftuc+"()");
+		if (t.isJob()) fields = fields.includingAll(Sequence{"jobId", "correlationId", "destination"});
+		%]
+		return "[%=t.name%] (" + [%=fields.collect(f|'" ' + f + '=" + ' + f).concat(" + ")%] + ")";
+	}
+	
+	[%for (f in t.fields.select(f|f.isEnumField())) {%]
+	[%=f.genEnumType()%]
+	
+	[%}%]
+}
+
+[%
+operation CrossflowLanguageModel!Field getJavaType() {
+	if (self.many) {
+		return "Collection<" + self.type + ">";
+	}
+	else {
+		return self.type;
+	}
+}
+
+operation CrossflowLanguageModel!Field isEnumField() {
+	return self.isTypeOf(CrossflowLanguageModel!EnumField);
+}
+
+@template
+operation CrossflowLanguageModel!Type genFieldDeclarations() {
+	for (f in t.fields) {
+		out.print("protected " + f.~javaType + " " + f.name);
+		if (f.many) out.print(" = new " + f.~javaImplType + "()");
+		out.println(";");
+	}
+}
+
+@template
+operation CrossflowLanguageModel!Type genConstructors() {%]
+/**
+ * Default Constructor
+ * <p>
+ * Deserialization requires an empty instance to modify
+ * </p>
+ */
+public [%=t.name%]() {
+	;
+}
+
+[% if (not t.allFields().isEmpty()) {%]
+/**
+ * Constructor allow initialization of all declared fields
+ */
+public [%=t.name%]([%
+	for (f in t.allFields()) {%]
+[%=f.~javaType%] [%=f.name%][%if (hasMore) {%], [%}%]
+	[%}%]) {
+	[%for (f in t.allFields()) {%]
+	this.[%=f.name%] = [%=f.name%];
+	[%}%]
+}
+[%}%]
+
+[% if (t.isJob()) {%] 
+public [%=t.name%]([%
+	for (f in t.allFields()) {%][%=f.~javaType%] [%=f.name%], [%}%]Job correlation) {
+	[%for (f in t.allFields()) {%]
+	this.[%=f.name%] = [%=f.name%];
+	[%}%]
+	this.correlationId = correlation.getCorrelationId();
+}
+[%}%]
+
+	[% if (t.closure(e|e.extending).size > 0) {
+		for(s in t.closure(e|e.extending)){%]
+public [%=t.name%]([%=s.name%] [%=s.name.ftlc%]) {
+		[%for (f in s.fields) { %]
+	this.set[%=f.name.ftuc%]([%=s.name.ftlc%].get[%=f.name.ftuc%]());
+		[%}%]
+		[%for (f in s.closure(e|e.extending).fields.flatten) { %]
+	this.set[%=f.name.ftuc%]([%=s.name.ftlc%].get[%=f.name.ftuc%]());
+		[%}%]
+	this.correlationId = [%=s.name.ftlc%].getJobId();
+}
+		[%}%]	
+	[%}%]
+[%}
+
+@template
+operation CrossflowLanguageModel!Type genFieldMethods() {
+	for (f in t.fields) {%]
+public [%=f.~javaType%] get[%=f.name.ftuc()%]() {
+	return this.[%=f.name%];
+}
+
+public void set[%=f.name.ftuc()%]([%=f.~javaType%] [%=f.name%]) {
+	this.[%=f.name%] = [%=f.name%];
+}
+
+	[%}
+}
+
+@template
+operation CrossflowLanguageModel!EnumField genEnumType() {%]
+public enum [%=self.name.ftuc()%] {
+	[%for (v in self.values) {%]
+	[%=v.toSnakeCaseUpper()%][%if (hasMore) {%],
+	[%} else {%];[%}
+	}%]
+}
+
+[%}
+
+operation CrossflowLanguageModel!DataField annotateType() {
+	if (self.many) {
+		self.~javaType = "Collection<" + self.getBoxedName() +">";
+		self.~javaImplType = "ArrayList<" + self.getBoxedName() + ">";
+	} else {
+		self.~javaType = self.type;
+		self.~javaImplType = self.type;
+	}
+}
+
+operation CrossflowLanguageModel!EnumField annotateType() {
+	if (self.many) {
+		self.~javaType = "Collection<" + self.name.ftuc() +">";
+		self.~javaImplType = "ArrayList<" + self.name.ftuc() + ">";
+	} else {
+		self.~javaType = self.name.ftuc();
+		self.~javaImplType = self.name.ftuc();
+	}
+}
+
+@cached
+operation CrossflowLanguageModel!Type allFields() {
+	var fields = new Sequence();
+	fields.addAll(self.fields);
+	fields.addAll(t.closure(e|e.extending).fields.flatten);
+	return fields;
+}
+%]

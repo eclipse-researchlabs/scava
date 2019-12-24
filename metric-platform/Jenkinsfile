@@ -1,0 +1,33 @@
+pipeline {
+  agent any
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '1'))
+  }
+  stages {
+    stage('Build Metric Platform') {
+      steps {
+        dir(path: 'metric-platform/') {
+          sh "mvn clean install -pl '!org.eclipse.scava:product' -DskipTests"
+        }
+      }
+    }
+    stage('Test Metric Platform') {
+      steps {
+        dir(path: 'metric-platform/') {
+          sh 'mvn test integration-test'
+        }
+      }
+      post {
+        success {
+          archiveArtifacts 'metric-platform/releng/org.eclipse.scava.product/target/products/*.zip'
+        }
+      }
+    }
+  }
+  post {
+    always {
+	  	junit '**/target/surefire-reports/TEST-*.xml'
+	  	deleteDir()
+		}
+  }
+}

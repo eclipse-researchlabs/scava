@@ -1,0 +1,37 @@
+{
+	"metricid" : "org.eclipse.scava.metricprovider.historic.newsgroups.migrationissuesmaracas.NewsgroupMigrationIssueMaracasHistoricMetricProvider",
+	"vis" : [ 
+		{
+			"id" : "newsgroups.dailymigrationissuesmaracas",
+			"name" : "NewsgroupsMigrationIssuesMaracas (daily)",
+			"description" : "The number of newsgroups threads regarding migration issues per day." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"rows" : "$dailyNewsgroupMigrationMaracasData",
+				"cols" : [  { "name" : "Date", "field" : "$__date" },
+					{ "name" : "NewsgroupName", "field" : "$newsgroupName"},
+					{ "name" : "MigrationIssues", "field" : "$numberOfIssues" },
+					{ "name" : "ThreadsID", "field" : "$threadsId" } ]
+			},
+			"x" : "Date",
+			"y" : "MigrationIssuesMaracas",
+			"timeSeries" : true
+		},
+		{
+			"id" : "newsgroups.migrationissuesmaracas.changes",
+			"name" : "NewsgroupsMigrationIssuesMaracas (changes)",
+			"description" : "Changes from Maracas, and their matching score [0,1], that were found in each newsgroup thread." ,
+			"type" : "LineChart",
+			"datatable" : {
+				"rows" : "$newsgroupMigrationMaracasData",
+				"cols" : [  { "name" : "Date", "field" : "$__date" },
+					{ "name" : "NewsgroupName", "field" : "$newsgroupName"},
+					{ "name" : "ThreadID", "field" : "$threadId" },
+					{ "name" : "Changes (Description\tMatchingScore)", "field" : "$changesAndMatchingPercentage"} ]
+			},
+			"x" : "Date",
+			"y" : "MigrationIssuesMaracasChanges",
+			"timeSeries" : true
+		}
+	]
+}
