@@ -1,6 +1,7 @@
 [%import "task2baseclass.egl";%]
 package [%=package%];
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

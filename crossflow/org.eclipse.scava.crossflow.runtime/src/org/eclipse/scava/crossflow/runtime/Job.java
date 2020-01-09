@@ -1,17 +1,40 @@
 package org.eclipse.scava.crossflow.runtime;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * A Job is a single unit of work, containing the data needed by a {@link Task}
+ * to execute.
+ */
 public class Job implements Serializable {
 
 	private static final long serialVersionUID = 431981L;
 
+	/**
+	 * Unique ID identifying the specific instance of the Job
+	 */
 	protected String jobId;
+
+	/**
+	 * ID identifying the source of the Job for caching purposes
+	 */
 	protected String correlationId;
+
+	/**
+	 * A set of IDs used to identify the source/root Job where this instance of Job
+	 * was spawned from. f {@code null} then this is a root Job i.e. the input
+	 * source of the workflow
+	 */
+	protected Set<String> rootIds;
+
 	protected String destination;
 	protected boolean cached = false;
 	protected int failures = 0;
@@ -22,8 +45,8 @@ public class Job implements Serializable {
 	protected boolean transactional = true;
 	// denotes that this job is a simple message denoting success of a transaction
 	// (with this correlationId and to totalOutputs # of channels)
-	private boolean isTransactionSuccessMessage = false;	
-	private int totalOutputs = 0; 
+	private boolean isTransactionSuccessMessage = false;
+	private int totalOutputs = 0;
 
 	public Job() {
 		this.jobId = UUID.randomUUID().toString();
@@ -32,7 +55,7 @@ public class Job implements Serializable {
 	public String toString() {
 		return jobId + " " + correlationId + " " + destination + " " + cacheable + " " + failures;
 	}
-	
+
 	public boolean isTransactional() {
 		return transactional;
 	}
@@ -40,12 +63,12 @@ public class Job implements Serializable {
 	public void setTransactional(boolean transactional) {
 		this.transactional = transactional;
 	}
-	
+
 	@Deprecated
 	public String getId() {
 		return getJobId();
 	}
-	
+
 	@Deprecated
 	public void setId(String id) {
 		setJobId(id);
@@ -65,6 +88,23 @@ public class Job implements Serializable {
 
 	public String getCorrelationId() {
 		return correlationId;
+	}
+
+	public Set<String> getRootIds() {
+		if (rootIds == null)
+			return Collections.emptySet();
+		return Collections.unmodifiableSet(rootIds);
+	}
+
+	public void addRootId(String rootId) {
+		if (rootIds == null)
+			rootIds = new HashSet<>();
+		rootIds.add(rootId);
+	}
+	
+	public void addRootId(Collection<String> rootIds) {
+		if (this.rootIds == null) this.rootIds = new HashSet<>();
+		this.rootIds.addAll(rootIds);
 	}
 
 	public void setDestination(String destination) {
@@ -109,14 +149,16 @@ public class Job implements Serializable {
 
 	@Deprecated
 	public String getXML() {
-		String jobId = this.jobId;
-		int failures = this.getFailures();
-		String correlationId = this.correlationId;
-		boolean cached = this.cached;
-		boolean cacheable = this.cacheable;
+		final String jobId = this.jobId;
+		final int failures = this.getFailures();
+		final String correlationId = this.correlationId;
+		final Set<String> rootIds = this.rootIds;
+		final boolean cached = this.cached;
+		final boolean cacheable = this.cacheable;
 
 		this.jobId = null;
 		this.correlationId = null;
+		this.rootIds = null;
 		this.failures = 0;
 		this.cached = false;
 		this.cacheable = true;
@@ -125,6 +167,7 @@ public class Job implements Serializable {
 
 		this.jobId = jobId;
 		this.correlationId = correlationId;
+		this.rootIds = rootIds;
 		this.cached = cached;
 		this.failures = failures;
 		this.cacheable = cacheable;
@@ -153,5 +196,5 @@ public class Job implements Serializable {
 	public void setTotalOutputs(int totalOutputs) {
 		this.totalOutputs = totalOutputs;
 	}
-	
+
 }

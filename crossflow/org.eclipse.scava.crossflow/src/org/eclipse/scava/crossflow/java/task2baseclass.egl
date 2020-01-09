@@ -6,7 +6,7 @@ var hasOutputs = not t.output.isEmpty();
 /** This class was automatically generated and should not be modified */
 package [%=package%];
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Generated;
@@ -31,7 +31,6 @@ public abstract class [%=t.name%]Base extends Task [%if(t.input.notEmpty()){%] i
 	public static final [%=w.name%]Tasks TASK = [%=w.name%]Tasks.[%=t.name.toSnakeCaseUpper()%]; 
 	
 	protected [%=w.name%] workflow;
-	protected long timeout = 0;
 	
 	[%// Task parameters
 	// TODO: Handle many attirbute of fields
@@ -43,31 +42,60 @@ public abstract class [%=t.name%]Base extends Task [%if(t.input.notEmpty()){%] i
 
 	[%}
 	
-	// Output streams
-	if (hasOutputs) {%]
-	// Output Streams
-		[%for (o in t.output) {
-			var type;		
-			if(o.inputOf.isEmpty()){
-				type = "BuiltinStream<" + o.type.name + ">";
-			} else {
-				type = o.name;
-			}%]	
-	protected [%=type%] [%=o.name.ftlc()%];	
-			[%}
-		
-		if (not t.isSingleOut()) { %]
-		
-	// Output Sent Flags
-			[%for (o in t.output) {%]
-	boolean hasSentTo[%=o.name%] = false;
-			[%}
-		}
+	/*
+	START - non-configuration stream field/method generation
+	- Field to hold ref to stream
+	- Field to hold sent status of stream
+	- Setters and getters
+	- Send methods
+	 */
+	if (hasOutputs) {%] 
+		[%for (s in t.output) {
+			var type = s.name;
+			if (s.inputOf.isEmpty()) type = "BuiltinStream<" + s.type.name + ">";
+		%]
+	/* 
+	 * [%=s.name%] stream fields/methods
+	 */
+	protected [%=type%] [%=s.name.ftlc()%];
+	protected boolean hasSentTo[%=s.name%] = false;
+
+	protected [%=type%] get[%=s.name%]() {
+		return [%=s.name.ftlc()%];
+	}
+
+	protected void set[%=s.name%]([%=type%] [%=s.name.ftlc()%]) {
+		this.[%=s.name.ftlc()%] = [%=s.name.ftlc()%];
+	}
+
+	public void sendTo[%=s.name%]([%=s.type.name%] [%=s.type.name.ftlc()%]) [%if(s.inputOf.isEmpty()){%]throws Exception [%}%]{
+		[%=s.type.name.ftlc()%].addRootId(currentRootIds);
+		[%=s.type.name.ftlc()%].setCacheable(cacheable);
+			[%if(t.isTypeOf(CrossflowLanguageModel!Source)){%]
+		[%=s.type.name.ftlc()%].setTransactional(false);
+			[%}%]
+			[%if(t.multipleOutputs or not (t.output.size==1)) {%]
+		hasSentTo[%=s.name%] = true;
+			[%}%]
+		get[%=s.name%]().send([%=s.type.name.ftlc()%][%if(not s.inputOf.isEmpty()){%], TASK.getTaskName()[%}%]);
 	}
 	
-	%]
-	protected HashMap<String,ListenableFuture<?>> currentRunnables= new HashMap();
-	[%
+		[%}
+		
+		if (not t.isSingleOut()) {%]
+	public int getTotalOutputs() {
+		int count = 0;
+		[%for (s in t.output) {%]
+		if (hasSentTo[%=s.name%]) count++;
+		[%}%]
+		return count;
+	}
+	
+		[%}
+	}
+	/*
+	 * END - non-configuration stream field/method generation
+	 */
 	
 	// Configuration streams if applicable
 	var configStreams = t.input.select(s|s.isConfigurationChannel());
@@ -75,16 +103,14 @@ public abstract class [%=t.name%]Base extends Task [%if(t.input.notEmpty()){%] i
 	// Configuration Received Flags
 		[%for (i in t.input.select(s|s.isConfigurationChannel())) {%]
 	boolean hasProcessed[%=i.name%] = false;
-		[%}%]
-
-	[%}
+		[%}
+	}%]
 	
-	// General methods
-	%]
 	public void setWorkflow([%=w.name%] workflow) {
 		this.workflow = workflow;
 	}
 
+	@Override
 	public [%=w.name%] getWorkflow() {
 		return workflow;
 	}
@@ -96,14 +122,6 @@ public abstract class [%=t.name%]Base extends Task [%if(t.input.notEmpty()){%] i
 
 	public [%=w.name%]Tasks getTaskEnum() {
 		return TASK;
-	}
-	
-	public long getTimeout() {
-		return timeout;
-	}
-	
-	public void setTimeout(long timeout) {
-		this.timeout = timeout;
 	}
 
 	[% // Parameter getters and setters
@@ -120,59 +138,9 @@ public abstract class [%=t.name%]Base extends Task [%if(t.input.notEmpty()){%] i
 		[%}
 	}
 	
-	// Output stream methods
-	if (hasOutputs) {%]
-		[%for (o in t.output) { 
-			var type;		
-			if(o.inputOf.isEmpty()){
-				type = "BuiltinStream<" + o.type.name + ">";
-			} else {
-				type = o.name;
-			}		
-		%]		
-	protected void set[%=o.name%]([%=type%] [%=o.name.ftlc()%]) {
-		this.[%=o.name.ftlc()%] = [%=o.name.ftlc()%];
-	}
-
-	protected [%=type%] get[%=o.name%]() {
-		return [%=o.name.ftlc()%];
-	}
-
-	public void sendTo[%=o.name%]([%=o.type.name%] [%=o.type.name.ftlc()%]) [%if(o.inputOf.isEmpty()){%]throws Exception [%}%]{
-		[%=o.type.name.ftlc()%].setCacheable(this.cacheable);
-			[%if(t.isTypeOf(CrossflowLanguageModel!Source)){%]
-		[%=o.type.name.ftlc()%].setTransactional(false);
-			[%}%]
-			[%if(t.multipleOutputs or not (t.output.size==1)) {%]
-		hasSentTo[%=o.name%] = true;
-			[%}%]
-		get[%=o.name%]().send([%=o.type.name.ftlc()%][%if(not o.inputOf.isEmpty()){%], TASK.getTaskName()[%}%]);
-	}
-
-		[%}
-	}
-	
 	// If task is a source, needs a produce method
 	if (t.isKindOf(CrossflowLanguageModel!Source)){%]
 	public abstract void produce() throws Exception;
-	
-	[%}
-	
-	// Helper for calculate totalOutputs
-	if (hasOutputs and not t.isSingleOut()) {%]
-	public int getTotalOutputs() {
-		return [%
-		for (s in t.output) {
-			out.print("(hasSentTo");
-			out.print(s.name);
-			out.print(" ? 1 : 0)");
-			if (hasMore) {
-				out.print("	+ ");
-			} else {
-				out.println(";");
-			}
-		}%]
-	}
 	
 	[%}
 	
@@ -180,9 +148,8 @@ public abstract class [%=t.name%]Base extends Task [%if(t.input.notEmpty()){%] i
 	[%=s.createStartOfConsumeMethod()%]
 		[%if (not s.isConfigurationChannel() and t.isSingleOut()) {%]
 				[%=t.output.first.type.name%] result = consume[%=s.name%]([%=s.type.name.ftlc()%]);
-				if(result != null){
-					if(isCacheable())
-						result.setCorrelationId([%=s.type.name.ftlc()%].getJobId());				
+				if(result != null) {
+					if(isCacheable()) result.setCorrelationId([%=s.type.name.ftlc()%].getJobId());				
 					result.setTransactional(false);
 					sendTo[%=t.output.first.name%](result);
 				}
@@ -197,16 +164,7 @@ public abstract class [%=t.name%]Base extends Task [%if(t.input.notEmpty()){%] i
 		}%]
 	[%=s.createEndOfConsumeMethod()%]
 	[%}%]
-	
-	public boolean cancelJob(String id) {
-		if (currentRunnables.containsKey(id)) {
-			boolean ret = currentRunnables.get(id).cancel(true);
-			currentRunnables.remove(id);
-			return ret;
-		}
-		return false;
-	}
-		
+
 }
 
 [%
@@ -236,6 +194,8 @@ public void consume[%=self.name%]WithNotifications([%=self.type.name%] [%=self.t
 	if (not (self.isConfigurationChannel() or t.isSource() or t.isSink())) {%]
 	try {
 		workflow.get[%=t.name%]s().getSemaphore().acquire();
+		currentRootIds = [%=self.type.name.ftlc()%].getRootIds();
+		if (currentRootIds.isEmpty()) currentRootIds = Collections.singleton([%=self.type.name.ftlc()%].getJobId());
 	} catch (Exception e) {
 		workflow.reportInternalException(e);
 	}
@@ -271,15 +231,16 @@ operation CrossflowLanguageModel!Stream createEndOfConsumeMethod() {%]
 			}
 		} finally {
 			try {
+				// cleanup instance
+				currentRootIds = Collections.emptySet();
+				currentRunnables = Collections.emptyMap();
+				
 				[%if (not (self.isConfigurationChannel() or t.isKindOf(CrossflowLanguageModel!Source) or t.isKindOf(CrossflowLanguageModel!Sink))){%]
 				workflow.get[%=t.name%]s().getSemaphore().release();
 				[%}if(self.isConfigurationChannel()){%]
 				hasProcessed[%=self.name%] = true;
 				[%}%]
 				workflow.setTaskWaiting(this);
-				
-				//after job finishes clear the current job
-				currentRunnables.remove([%=self.type.name.ftlc()%].getJobId());
 			} catch (Exception e) {
 				workflow.reportInternalException(e);
 			}
@@ -287,14 +248,13 @@ operation CrossflowLanguageModel!Stream createEndOfConsumeMethod() {%]
 	[%if (not (self.isConfigurationChannel() or t.isSource() or t.isSink())) {%]		
 	};
 	
-	ListenableFuture<?> consumerFuture = workflow.get[%=t.name%]s().getExecutor().submit(consumer);
-	long timeout = [%=self.type.name.ftlc()%].getTimeout() > 0 ? [%=self.type.name.ftlc()%].getTimeout() : this.timeout;
-	
 	//track current job execution (for cancellation)
-	currentRunnables.put([%=self.type.name.ftlc()%].getJobId(),consumerFuture);	
+	ListenableFuture<?> consumerFuture = workflow.get[%=t.name%]s().getExecutor().submit(consumer);
+	currentRunnables = Collections.singletonMap([%=self.type.name.ftlc()%].getJobId(),consumerFuture);	
 	
+	long timeout = [%=self.type.name.ftlc()%].getTimeout() > 0 ? [%=self.type.name.ftlc()%].getTimeout() : this.timeout;
 	if (timeout > 0) {
-		Futures.withTimeout(consumerFuture, [%=self.type.name.ftlc()%].getTimeout(), TimeUnit.SECONDS, workflow.getTimeoutManager());
+		Futures.withTimeout(consumerFuture, timeout, TimeUnit.SECONDS, workflow.getTimeoutManager());
 	}
 
 	[%}%]

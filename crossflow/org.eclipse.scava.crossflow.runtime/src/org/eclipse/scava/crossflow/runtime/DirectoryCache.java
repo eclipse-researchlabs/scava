@@ -108,7 +108,6 @@ public class DirectoryCache implements Cache {
 	protected void save(Job job, File file) throws Exception {
 		FileOutputStream fos = new FileOutputStream(file);
 		String serialize = workflow.getSerializer().serialize(job);
-		System.out.println(serialize);
 		fos.write(serialize.getBytes());
 		fos.flush();
 		fos.close();
