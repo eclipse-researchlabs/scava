@@ -4,9 +4,17 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.scava.crossflow.runtime.serialization.XstreamSerializer;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+/**
+ * Class has been deprecated, please see
+ * {@link org.eclipse.scava.crossflow.runtime.Serializer} and
+ * {@link XstreamSerializer}
+ *
+ */
 @Deprecated
 public class Serializer {
 
@@ -48,7 +56,7 @@ public class Serializer {
 	 */
 	public void register(Class<?> clazz) {
 		xstream.alias(clazz.getSimpleName(), clazz);
-		xstream.allowTypes(new Class[] {clazz});
+		xstream.allowTypes(new Class[] { clazz });
 	}
 
 }

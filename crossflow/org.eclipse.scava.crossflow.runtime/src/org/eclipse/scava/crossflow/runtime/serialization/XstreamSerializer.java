@@ -9,6 +9,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * {@link Serializer} implementation that uses {@link XStream} as the backing
  * implementation
  */
+@Deprecated
 public class XstreamSerializer extends AbstractSerializer {
 
 	protected XStream xstream;

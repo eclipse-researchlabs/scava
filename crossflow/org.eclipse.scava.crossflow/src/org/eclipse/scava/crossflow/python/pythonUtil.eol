@@ -58,3 +58,19 @@ operation Type pyType() : String {
 operation String pyVarName() : String {
 	return self.toSnakeCaseLower();
 }
+operation CrossflowLanguageModel!Workflow getSerializer() : CrossflowLanguageModel!Serializer {
+	var s = self.serializer;
+	if (s.isUndefined()) {
+		s = new CrossflowLanguageModel!Serializer;
+	}
+
+	if ("xml".equalsIgnoreCase(s.name)) {
+		throw "'xml' based serializer not supported in Python, use JSON instead";
+	} 
+	// Default to JSON in all other cases
+	else {
+		s.~implClass = "JsonSerializer";
+	}
+	
+	return s; 
+}

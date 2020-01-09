@@ -16,3 +16,20 @@ operation CrossflowLanguageModel!DataField getBoxedName() : String {
 operation CrossflowLanguageModel!EnumField getBoxedName() : String {
 	return self.type;
 }
+
+operation CrossflowLanguageModel!Workflow getSerializer() : CrossflowLanguageModel!Serializer {
+	var s = self.serializer;
+	if (s.isUndefined()) {
+		s = new CrossflowLanguageModel!Serializer;
+	}
+
+	if ("xml".equalsIgnoreCase(s.name)) {
+		s.~implClass = "XstreamSerializer";
+	} 
+	// Default to JSON in all other cases
+	else {
+		s.~implClass = "JsonSerializer";
+	}
+	
+	return s; 
+}
