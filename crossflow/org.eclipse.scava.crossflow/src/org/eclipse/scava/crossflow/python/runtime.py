@@ -23,7 +23,7 @@ import tempfile
 import threading
 import time
 from traceback import TracebackException
-from typing import Any
+from typing import Any, Iterable
 import uuid
 import warnings
 
@@ -668,6 +668,7 @@ class Job:
         self.jobId = str(uuid.uuid4())
         #TODO: needs to change to _correlation_id in type2class.egl
         self.correlationId = ""
+        self.rootIds = []
         self.destination = ""
         self.cached = False
         self.failures = 0
@@ -703,6 +704,17 @@ class Job:
 
     def setJobId(self, job_id):
         self.jobId = job_id
+    
+    def addRootId(self, root_id):
+        if root_id is None or root_id in self.rootIds: 
+            return
+        if isinstance(root_id, str):
+            self.rootIds.add(root_id)
+        if isinstance(root_id, Iterable):
+            self.rootIds.update(root_id)
+            
+    def getRootIds(self):
+        return self.rootIds
 
     def setCorrelationId(self, correlation_id):
         self.correlationId = correlation_id
