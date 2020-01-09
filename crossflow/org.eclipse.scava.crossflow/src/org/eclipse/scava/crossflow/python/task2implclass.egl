@@ -43,8 +43,8 @@ def produce(self):
 
 @template
 operation Stream genConsume(send : Boolean) {%]
-def consume[%=self.name%](self, [%=self.type.pyVarName()%]: [%=self.type.name%]):
-    print(f"{self.workflow.name}:[%=t.name%]:consume[%=self.name%] received {[%=self.type.pyVarName()%]}")
+def consume[%=self.name%](self, [%=self.type.name.toSnakeCaseLower()%]: [%=self.type.name%]):
+    print(f"{self.workflow.name}:[%=t.name%]:consume[%=self.name%] received {[%=self.type.name.toSnakeCaseLower()%]}")
     
     # Do work here
     
@@ -57,7 +57,7 @@ def consume[%=self.name%](self, [%=self.type.pyVarName()%]: [%=self.type.name%])
 
 @template
 operation Stream genResult(send : Boolean) {
-    var result = self.pyVarName() + "_" + self.type.pyVarName();%]
+    var result = self.name.toSnakeCaseLower() + "_" + self.type.name.toSnakeCaseLower();%]
 [%=result%] = [%=self.type.name%]()
 # modify your result here
     [%if (send) {%]

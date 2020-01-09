@@ -6,7 +6,7 @@ import time
 
 # Tasks
 [%for (t in w.getPyTasks()) {%]
-from [%=package%].[%=t.pyVarName()%] import [%=t.name%]
+from [%=package%].[%=t.name.toSnakeCaseLower()%] import [%=t.name%]
 [%}%]
 
 # Types
@@ -17,12 +17,12 @@ from crossflow.[%=package%] import [%=t.name.toSnakeCaseLower()%]
 # Streams
 [%for (s in w.streams) {
 	if(not s.inputOf.isEmpty()) {%]
-from crossflow.[%=package%].[%=s.pyVarName()%] import [%=s.name%]
+from crossflow.[%=package%].[%=s.name.toSnakeCaseLower()%] import [%=s.name%]
 [%	}
 }%]
 
 # Utility
-from crossflow.[%=package%].[%=w.pyVarName()%]_tasks import [%=w.name%]Tasks
+from crossflow.[%=package%].[%=w.name.toSnakeCaseLower()%]_tasks import [%=w.name%]Tasks
 from crossflow.runtime import BuiltinStream, Mode, Workflow
 from crossflow.serialization import Serializer, JsonSerializer
 
@@ -60,7 +60,7 @@ class [%=w.name%](Workflow):
                          
         # Streams
         [%for (s in w.streams) { %]
-        self.[%=s.name.ftlc()%]: [%=s.pyType()%] = None
+        self.[%=s.name.ftlc()%]: [%=s.getTypeHintName()%] = None
         [%}%]
 
         # Tasks
@@ -134,7 +134,7 @@ class [%=w.name%](Workflow):
             self.report_internal_exception(ex)
 
     [%for (s in w.streams) { %]
-    def get[%=s.name%](self) -> [%=s.pyType()%]:
+    def get[%=s.name%](self) -> [%=s.getTypeHintName()%]:
         return self.[%=s.name.ftlc()%]
         
     [%}%]
@@ -197,4 +197,14 @@ self.[%=self.name.ftlc()%].init()
 self.[%=self.name.ftlc()%] = [%=self.name%](self, self._enable_prefetch)
 	[%}%]
 self._active_streams.append(self.[%=self.name.ftlc()%])
-[%}%]
+[%}
+
+@cached
+operation Stream getTypeHintName() : String {
+	if (self.inputOf.isEmpty()) {
+		return "BuiltinStream";
+	} else {
+		return self.name;
+	}
+}
+%]

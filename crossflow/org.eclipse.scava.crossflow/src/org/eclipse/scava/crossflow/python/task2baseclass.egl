@@ -4,7 +4,7 @@ import multiprocessing
 import time
 
 from crossflow.runtime import FailedJob, Task
-from crossflow.[%=package%].[%=w.pyVarName()%]_tasks import [%=w.name%]Tasks
+from crossflow.[%=package%].[%=w.name.toSnakeCaseLower()%]_tasks import [%=w.name%]Tasks
 
 [% for (t in outputTypes) { %]
 from crossflow.[%=package%].[%=t.name.toSnakeCaseLower()%] import [%=t.name%]
@@ -25,7 +25,7 @@ class [%=t.name%]Base(Task):
         # Streams
         [%for (s in t.output) { %]
         self.[%=s.name.ftlc()%] = None
-        self._has_sent_to_[%=s.pyVarName()%] = False
+        self._has_sent_to_[%=s.name.toSnakeCaseLower()%] = False
         
         [%}%]
 
@@ -36,7 +36,7 @@ class [%=t.name%]Base(Task):
     def get_total_outputs(self):
         return sum([[%
         for (s in t.output) {
-            out.print("self._has_sent_to_" + s.pyVarName());
+            out.print("self._has_sent_to_" + s.name.toSnakeCaseLower());
             if (hasMore) {
                 out.print(", ");
             }
@@ -60,7 +60,7 @@ class [%=t.name%]Base(Task):
     [%for (s in t.input) { %]
     def consume[%=s.name%]WithNotifications(self, [%=s.type.name.ftlc()%]):
         [%for (o in t.output) {%]
-        self._has_sent_to_[%=o.pyVarName()%] = False
+        self._has_sent_to_[%=o.name.toSnakeCaseLower()%] = False
         [%}%]
         
         try:
@@ -77,12 +77,12 @@ class [%=t.name%]Base(Task):
                 self.consume[%=s.name%]([%=s.type.name.ftlc()%])
                 
                 [%for (o in t.output) {
-                    var conf = o.pyVarName() + "_conf";%]
+                    var conf = o.name.toSnakeCaseLower() + "_conf";%]
                 [%=conf%] = [%=t.output.first.type.name%]()
                 [%=conf%].setCorrelationId([%=s.type.name.ftlc()%].getId())
                 [%=conf%].setIsTransactionSuccessMessage(True)
                 [%=conf%].totalOutputs = self.get_total_outputs()
-                if self._has_sent_to_[%=o.pyVarName()%]:
+                if self._has_sent_to_[%=o.name.toSnakeCaseLower()%]:
                     self.sendTo[%=o.name%]([%=conf%])
                     
                 [%}
@@ -100,21 +100,28 @@ class [%=t.name%]Base(Task):
             else:
                 consumer()
             
-        except Exception as ex:
-            self.workflow.local_logger.exception("")
+                self._process.join()
+
+        # Timeout reached
+        except TimeoutError as ex:
             try:
-                send_failed = True
-                if ex.__class__ == TimeoutError:
-                    send_failed = self.on_consume_[%=s.pyVarName()%]_timeout([%=s.type.name.ftlc()%])
-                
-                if send_failed:
+                self.workflow.report_internal_exception(ex)
+                send = self.on_consume_[%=s.name.toSnakeCaseLower()%]_timeout([%=s.type.name.ftlc()%])
+                if send:
                     [%=s.type.name.ftlc()%].setFailures(int([%=s.type.name.ftlc()%].getFailures()) + 1)
                     self.workflow.failed_jobs_topic.send(FailedJob.from_exception([%=s.type.name.ftlc()%], ex, self))
-            
-            except Exception as ex:
-                self.workflow.local_logger.exception("")
+            except:
                 self.workflow.report_internal_exception(ex)
-        
+
+        # All other exceptions  
+        except Exception as ex:
+            try:
+                self.workflow.report_internal_exception(ex)
+                self.workflow.failed_jobs_topic.send(FailedJob.from_exception([%=s.type.name.ftlc()%], ex, self))
+            except:
+                self.workflow.report_internal_exception(ex)
+
+        # Cleanup
         finally:
             try:
                 self.workflow.set_task_waiting(self)
@@ -125,7 +132,7 @@ class [%=t.name%]Base(Task):
     def consume[%=s.name%](self, [%=s.type.name.ftlc()%]):
         pass
     
-    def on_consume_[%=s.pyVarName()%]_timeout(self, [%=s.type.pyVarName()%]):
+    def on_consume_[%=s.name.toSnakeCaseLower()%]_timeout(self, [%=s.type.name.toSnakeCaseLower()%]):
         return True
     [%}%]
     
