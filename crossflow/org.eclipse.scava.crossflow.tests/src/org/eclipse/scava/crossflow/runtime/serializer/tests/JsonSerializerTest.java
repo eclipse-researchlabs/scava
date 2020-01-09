@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.EnumSet;
 
 import org.eclipse.scava.crossflow.runtime.FailedJob;
 import org.eclipse.scava.crossflow.runtime.InternalException;
@@ -141,7 +142,7 @@ public class JsonSerializerTest {
 	@Test
 	public void serialize_should_return_correct_json_when_given_ControlSignal_objects() throws Exception {
 		final String senderId = "JsonSerializerTest Sender";
-		for (ControlSignals signal : ControlSignals.values()) {
+		for (ControlSignals signal : EnumSet.complementOf(EnumSet.of(ControlSignals.CANCEL_JOB))) {
 			ControlSignal obj = new ControlSignal(signal, senderId);
 			String actual = serializer.serialize(obj);
 			String expected = jsonFromFile("ControlSignal-" + signal.name() + ".json");
@@ -152,7 +153,7 @@ public class JsonSerializerTest {
 	@Test
 	public void deserialize_should_return_ControlSignal_when_given_valid_json() throws Exception {
 		final String senderId = "JsonSerializerTest Sender";
-		for (ControlSignals signal : ControlSignals.values()) {
+		for (ControlSignals signal : EnumSet.complementOf(EnumSet.of(ControlSignals.CANCEL_JOB))) {
 			String json = jsonFromFile("ControlSignal-" + signal.name() + ".json");
 			ControlSignal actual = serializer.deserialize(json);
 			ControlSignal expected = new ControlSignal(signal, senderId);
