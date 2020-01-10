@@ -55,9 +55,11 @@ for (f in t.~fields) {
 // Import generation
 if (t.fields.exists(f|f.isTypeOf(CrossflowLanguageModel!EnumField))) {%]
 from enum import Enum, unique
-[%}
+[%}%]
+from typing import Union
 
-if (t.isJob()) {%]
+
+[%if (t.isJob()) {%]
 from crossflow.runtime import Job
 [%}
 
@@ -94,17 +96,13 @@ class [%=t.name%][%if (t.getSuperType().isDefined()) {%]([%=t.getSuperType()%])[
         [%=f.name.toSnakeCaseLower()%]: [%=f.~pyType%] = [% if (f.many) {%][][%} else {%]None[%}%],
         [%}
         if (t.isJob()) {%]
-        correlation: Job = None
+        correlation_id: Union["[%=t.name%]", Job, str] = None
         [%}
         %]
     ):
-        super().__init__()
+        super().__init__([% if (t.isJob()) {%]correlation_id=correlation_id[%}%])
         [% for (f in t.~fields) {%]
         self._[%=f.name.toSnakeCaseLower()%] = [%=f.name.toSnakeCaseLower()%]
-        [%}
-        if (t.isJob()) { // TODO: change this when correlationId -> _correlation_id%]
-        if correlation is not None:
-            self.correlationId = correlation.correlationId
         [%}
     }%]
 
@@ -123,8 +121,8 @@ class [%=t.name%][%if (t.getSuperType().isDefined()) {%]([%=t.getSuperType()%])[
         var names = t.fields.collect(f|f.name.toSnakeCaseLower());
         if (t.isJob()) {
         	// TODO: Replace this with snakecased names when runtime changes
-            names.add("jobId");
-            names.add("correlationId");
+            names.add("job_id");
+            names.add("correlation_id");
             names.add("destination");
         }
         var format = "";

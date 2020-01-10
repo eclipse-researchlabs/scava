@@ -23,7 +23,7 @@ import tempfile
 import threading
 import time
 from traceback import TracebackException
-from typing import Any, Iterable
+from typing import Any, Iterable, Union
 import uuid
 import warnings
 
@@ -529,8 +529,8 @@ class DirectoryCache(object):
                     output_file.read()
                 )
                 output_file.close()
-                output_job.jobId = str(uuid.uuid4())
-                output_job.correlationId = input_job.jobId
+                output_job.job_id = str(uuid.uuid4())
+                output_job.correlation_id = input_job.job_id
                 output_job.cached = True
                 outputs.append(output_job)
             return outputs
@@ -544,8 +544,8 @@ class DirectoryCache(object):
         if not output_job.cacheable:
             return
 
-        self.jobMap[output_job.jobId] = output_job
-        input_job = self.jobMap.get(output_job.correlationId)
+        self.jobMap[output_job.job_id] = output_job
+        input_job = self.jobMap.get(output_job.correlation_id)
 
         if input_job is not None:
             stream_folder = self.directoryFullpath + "/" + input_job.getDestination()
@@ -571,8 +571,8 @@ class DirectoryCache(object):
 
     def cacheTransactionally(self, outputJob):
 
-        if outputJob.isTransactionSuccessMessage():
-            self.cachePendingTransactions(outputJob.getCorrelationId())
+        if outputJob.is_transaction_success_message:
+            self.cachePendingTransactions(outputJob.correlation_id)
             return
 
         if not outputJob.cacheable:
@@ -582,23 +582,23 @@ class DirectoryCache(object):
         # complete so should be indexed in the job map regardless
         self.jobMap[outputJob.getId()] = outputJob
 
-        if outputJob.getCorrelationId() == None:
+        if outputJob.correlation_id == None:
             return
 
-        currentPending = self.pendingTransactions[outputJob.getCorrelationId()]
+        currentPending = self.pendingTransactions[outputJob.correlation_id]
         if currentPending == None:
             currentPending = []
         currentPending.append(outputJob)
 
-        self.pendingTransactions[outputJob.getCorrelationId()] = currentPending
+        self.pendingTransactions[outputJob.correlation_id] = currentPending
 
-    def cachePendingTransactions(self, correlationId):
-        inputJob = self.jobMap[correlationId]
+    def cachePendingTransactions(self, correlation_id):
+        inputJob = self.jobMap[correlation_id]
 
         if inputJob != None:
             streamFolder = self.directoryFullpath + "/" + inputJob.getDestination()
             try:
-                pending = self.pendingTransactions[correlationId]
+                pending = self.pendingTransactions[correlation_id]
                 if not pending == None:
                     inputFolder = streamFolder + "/" + inputJob.getHash()
                     os.makedirs(inputFolder)
@@ -609,7 +609,9 @@ class DirectoryCache(object):
                             self.jobFolderMap[inputJob.getHash()] = inputFolder
                             self.save(outputJob, outputFile)
             except Exception as ex:
-                self.workflow.local_logger.exception(f"Error caching pending transaction for CorrelationID: {correlationId}")
+                self.workflow.local_logger.exception(
+                    f"Error caching pending transaction for correlation_id: {correlation_id}"
+                )
                 self.workflow.report_internal_exception(ex)
 
 
@@ -664,120 +666,159 @@ class CacheManagerTask(Task):
 
 
 class Job:
-    def __init__(self):
-        self.jobId = str(uuid.uuid4())
-        #TODO: needs to change to _correlation_id in type2class.egl
-        self.correlationId = ""
-        self.rootIds = []
-        self.destination = ""
-        self.cached = False
-        self.failures = 0
-        self.cacheable = True
-        self.timeout = 0
-        # sets whether self job requires a transactional level of caching (usually due
-        # to being created multiple times per single task)
-        self.transactional = True
-        # denotes that self job is a simple message denoting success of a transaction
-        # (with self correlationId)
-        self.isTransactionSuccessMessage = False
-        self.totalOutputs = 0
+    def __init__(
+        self,
+        job_id: str = None,
+        correlation_id: Union["Job", str] = None,
+        root_ids: Union[list, set] = [],
+        destination: str = None,
+        total_outputs: int = 0,
+        cached: bool = False,
+        cacheable: bool = True,
+        failures: int = 0,
+        timeout: int = 0,
+        transactional: bool = True,
+        is_transaction_success_message: bool = False,
+    ):
+
+        self._job_id = str(uuid.uuid4()) if job_id is None else job_id
+        self._correlation_id = (
+            correlation_id.correlation_id
+            if isinstance(correlation_id, Job)
+            else correlation_id
+        )
+        self._root_ids = root_ids if isinstance(root_ids, set) else set(root_ids)
+        self._destination = destination
+        self._total_outputs = total_outputs
+        self._cached = cached
+        self._cacheable = cacheable
+        self._failures = failures
+        self._timeout = timeout
+        self._transactional = transactional
+        self._is_transaction_success_message = is_transaction_success_message
 
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
 
-    def isTransactional(self):
-        return self.transactional
+    @property
+    def job_id(self) -> str:
+        return self._job_id
 
-    def setTransactional(self, transactional):
-        self.transactional = transactional
+    @job_id.setter
+    def job_id(self, job_id: str):
+        self._job_id = job_id
 
-    def setId(self, job_id):
-        warnings.warn("deprecated", category=DeprecationWarning, stacklevel=2)
-        self.jobId = job_id
+    @property
+    def correlation_id(self) -> str:
+        return self._correlation_id
 
-    def getId(self):
-        warnings.warn("deprecated", category=DeprecationWarning, stacklevel=2)
-        return self.jobId
+    @correlation_id.setter
+    def correlation_id(self, correlation_id: str):
+        self._correlation_id = correlation_id
 
-    def getJobId(self):
-        return self.jobId
+    @property
+    def root_ids(self) -> set:
+        return self._root_ids
 
-    def setJobId(self, job_id):
-        self.jobId = job_id
-    
-    def addRootId(self, root_id):
-        if root_id is None or root_id in self.rootIds: 
-            return
-        if isinstance(root_id, str):
-            self.rootIds.add(root_id)
-        if isinstance(root_id, Iterable):
-            self.rootIds.update(root_id)
-            
-    def getRootIds(self):
-        return self.rootIds
+    @root_ids.setter
+    def root_ids(self, root_ids: Union[list, set]):
+        if isinstance(root_ids, set):
+            self._root_ids = root_ids
+        elif isinstance(root_ids, list):
+            self._root_ids = set(root_ids)
+        else:
+            raise AttributeError("Must be a list or set")
 
-    def setCorrelationId(self, correlation_id):
-        self.correlationId = correlation_id
+    @property
+    def destination(self) -> str:
+        return self._destination
 
-    def getCorrelationId(self):
-        return self.correlationId
+    @destination.setter
+    def destination(self, destination: str):
+        self._destination = destination
 
-    def setDestination(self, destination):
-        self.destination = destination
+    @property
+    def total_outputs(self) -> int:
+        return self._total_outputs
 
-    def getDestination(self):
-        return self.destination
+    @total_outputs.setter
+    def total_outputs(self, total_outputs: int):
+        self._total_outputs = total_outputs
 
-    def isCached(self):
-        return self.cached
+    @property
+    def cached(self) -> bool:
+        return self._cached
 
-    def setCached(self, cached):
-        self.cached = cached
+    @cached.setter
+    def cached(self, cached: bool):
+        self._cached = cached
 
-    def isCacheable(self):
-        return self.cacheable
+    @property
+    def cacheable(self) -> bool:
+        return self._cacheable
 
-    def setCacheable(self, cacheable):
-        self.cacheable = cacheable
+    @cacheable.setter
+    def cacheable(self, cacheable: bool):
+        self._cacheable = cacheable
 
-    def getTimeout(self):
-        return self.timeout
+    @property
+    def failures(self) -> int:
+        return self._failures
 
-    def setTimeout(self, timeout: int):
-        self.timeout = timeout
+    @failures.setter
+    def failures(self, failures: int):
+        self._failures = failures
 
-    def getFailures(self):
-        return self.failures
+    @property
+    def timeout(self) -> int:
+        return self._timeout
 
-    def setFailures(self, failures):
-        self.failures = failures
+    @timeout.setter
+    def timeout(self, timeout: int):
+        self._timeout = timeout
 
-    def getIsTransactionSuccessMessage(self):
-        return self.isTransactionSuccessMessage
+    @property
+    def transactional(self) -> bool:
+        return self._transactional
 
-    def setIsTransactionSuccessMessage(self, is_transaction_success_message):
-        self.isTransactionSuccessMessage = is_transaction_success_message
+    @transactional.setter
+    def transactional(self, transactional: bool):
+        self._transactional = transactional
+
+    @property
+    def is_transaction_success_message(self) -> bool:
+        return self._is_transaction_success_message
+
+    @is_transaction_success_message.setter
+    def is_transaction_success_message(self, is_transaction_success_message: bool):
+        self._is_transaction_success_message = is_transaction_success_message
 
     def getPickleBytes(self):
-        id = self.jobId
-        failures = self.failures
-        correlationId = self.correlationId
+        job_id = self.job_id
+        correlation_id = self.correlation_id
+        root_ids = self.root_ids
         cached = self.cached
         cacheable = self.cacheable
+        failures = self.failures
+        timeout = self.timeout
 
-        self.jobId = None
-        self.correlationId = None
-        self.failures = 0
+        self.job_id = None
+        self.correlation_id = None
+        self.root_ids = []
         self.cached = False
         self.cacheable = True
+        self.failures = 0
+        self.timeout = 0
 
         pickleBytes = pickle.dumps(self)
 
-        self.jobId = id
-        self.correlationId = correlationId
+        self.job_id = job_id
+        self.correlation_id = correlation_id
+        self.root_ids = root_ids
         self.cached = cached
-        self.failures = failures
         self.cacheable = cacheable
+        self.failures = failures
+        self.timeout = timeout
 
         return pickleBytes
 
@@ -883,7 +924,7 @@ class JobStream(Stream):
         try:
             # if the sender is one of the targets of this stream, it has re-sent a message
             # so it should only be put in the relevant physical queue
-            job.setDestination(type(self).__name__)
+            job.destination = type(self).__name__
             body = self.workflow.serializer.serialize(job)
             destination = self._pre.get(task_id, None)
             if destination is not None:

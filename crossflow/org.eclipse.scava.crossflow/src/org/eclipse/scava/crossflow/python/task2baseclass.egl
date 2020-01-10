@@ -50,9 +50,9 @@ class [%=t.name%]Base(Task):
         return self.[%=o.name.ftlc()%]
     
     def sendTo[%=o.name%](self, [%=o.type.name.ftlc()%]):
-        [%=o.type.name.ftlc()%].setCacheable(self.cacheable)
+        [%=o.type.name.ftlc()%].cacheable = self.cacheable
         [%if(t.isTypeOf(Source)){%]
-        [%=o.type.name.ftlc()%].setTransactional(False)
+        [%=o.type.name.ftlc()%].transactional = False
         [%}%]
         self.get[%=o.name%]().send([%=o.type.name.ftlc()%][%if(not o.inputOf.isEmpty()){%], self.__class__.__name__[%}%])
     
@@ -65,13 +65,13 @@ class [%=t.name%]Base(Task):
         
         try:
             def consumer():
-                self.workflow.set_task_in_progress(self, [%=s.type.name.ftlc()%].getId())
+                self.workflow.set_task_in_progress(self, [%=s.type.name.ftlc()%].job_id)
             [%if (t.isSingleOut()) {%]
                 result = self.consume[%=s.name%]([%=s.type.name.ftlc()%])
                 if result is not None:
                     if self.cacheable:
-                        result.setCorrelationId([%=s.type.name.ftlc()%].getId())
-                    result.setTransactional(False)
+                        result.correlation_id([%=s.type.name.ftlc()%].job_id)
+                    result.transactional = False
                     self.sendTo[%=t.output.first.name%](result)
             [%}else {%]
                 self.consume[%=s.name%]([%=s.type.name.ftlc()%])
@@ -79,9 +79,9 @@ class [%=t.name%]Base(Task):
                 [%for (o in t.output) {
                     var conf = o.name.toSnakeCaseLower() + "_conf";%]
                 [%=conf%] = [%=t.output.first.type.name%]()
-                [%=conf%].setCorrelationId([%=s.type.name.ftlc()%].getId())
-                [%=conf%].setIsTransactionSuccessMessage(True)
-                [%=conf%].totalOutputs = self.get_total_outputs()
+                [%=conf%].correlation_id([%=s.type.name.ftlc()%].job_id)
+                [%=conf%].is_transaction_success_message = True
+                [%=conf%].total_outputs = self.get_total_outputs()
                 if self._has_sent_to_[%=o.name.toSnakeCaseLower()%]:
                     self.sendTo[%=o.name%]([%=conf%])
                     
@@ -106,7 +106,7 @@ class [%=t.name%]Base(Task):
                 self.workflow.report_internal_exception(ex)
                 send = self.on_consume_[%=s.name.toSnakeCaseLower()%]_timeout([%=s.type.name.ftlc()%])
                 if send:
-                    [%=s.type.name.ftlc()%].setFailures(int([%=s.type.name.ftlc()%].getFailures()) + 1)
+                    [%=s.type.name.ftlc()%].failures = [%=s.type.name.ftlc()%].failures + 1
                     self.workflow.failed_jobs_topic.send(FailedJob.from_exception([%=s.type.name.ftlc()%], ex, self))
             except:
                 self.workflow.report_internal_exception(ex)
