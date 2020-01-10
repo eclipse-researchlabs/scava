@@ -106,7 +106,9 @@ class JsonSerializer(Serializer):
         return json.dumps(as_dict)
 
     def _serialize(self, obj: object):
-        if isinstance(obj, list):
+        if isinstance(obj, set):
+            return self._serialize(list(obj))
+        elif isinstance(obj, list):
             return [self._serialize(i) for i in obj]
         elif isinstance(obj, dict):
             return {

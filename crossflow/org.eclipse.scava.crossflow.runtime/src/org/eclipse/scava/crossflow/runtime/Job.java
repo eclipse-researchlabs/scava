@@ -155,6 +155,7 @@ public class Job implements Serializable {
 		final Set<String> rootIds = this.rootIds;
 		final boolean cached = this.cached;
 		final boolean cacheable = this.cacheable;
+		final long timeout = this.timeout;
 
 		this.jobId = null;
 		this.correlationId = null;
@@ -162,6 +163,7 @@ public class Job implements Serializable {
 		this.failures = 0;
 		this.cached = false;
 		this.cacheable = true;
+		this.timeout = 0;
 
 		String xml = new XStream(new DomDriver()).toXML(this);
 
@@ -171,6 +173,7 @@ public class Job implements Serializable {
 		this.cached = cached;
 		this.failures = failures;
 		this.cacheable = cacheable;
+		this.timeout = timeout;
 
 		return xml;
 	}
