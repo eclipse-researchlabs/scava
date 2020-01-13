@@ -1,0 +1,35 @@
+<?nsuri org.eclipse.scava.crossflow?>
+<?render-graphviz-dot graphviz.egl?>
+<_>
+	<workflow name="ConcurrencyWorkflow">
+		<queue name="SleepTimes" type="SleepTime"/>
+		<queue name="Results" type="Result"/>
+		
+		<source name="SleepTimeSource" out="SleepTimes"/>
+		<task name="Sleeper" in="SleepTimes" out="Results" language="python,java"/>
+		
+		<type name="SleepTime">
+			<datafield name="seconds" type="int"/>
+		</type>
+		
+		<type name="Result">
+			<datafield name="completed" type="boolean"/>
+		</type>
+		
+		<languages>
+			<language
+				name="java"
+				package="org.eclipse.scava.crossflow.tests.concurrency"
+				outputFolder="src"
+				genOutputFolder="src-gen">
+			</language>
+			<language name="python"
+				package="concurrency"
+				outputFolder="py"
+				genOutputFolder="py-gen">
+				<parameter name="skipReadme" value="true"/>
+				<parameter name="skipMain" value="true"/>
+			</language>
+		</languages>
+	</workflow>
+</_>
