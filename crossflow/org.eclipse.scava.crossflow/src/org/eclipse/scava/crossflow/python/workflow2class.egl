@@ -56,7 +56,7 @@ class [%=w.name%](Workflow):
                          cache_enabled=cache_enabled,
                          delete_cache=delete_cache,
                          excluded_tasks=excluded_tasks,
-                         enable_prefetch=False)
+                         enable_prefetch=enable_prefetch)
                          
         # Streams
         [%for (s in w.streams) { %]
@@ -64,15 +64,9 @@ class [%=w.name%](Workflow):
         [%}%]
 
         # Tasks
-        [%for (t in w.tasks) {%]
-        [%if (t.isPyTask()) {%]
-        self.[%=t.name.ftlc()%] = None
-        [%}%]
-        [%}%]
-        
-        # Task creation
         self.tasks = []
         [%for (t in w.getPyTasks()){%]
+        self.[%=t.name.ftlc()%] = None
         if [%=w.name%]Tasks.[%=t.name.toSnakeCaseUpper()%] not in self._excluded_tasks:
             self.[%=t.name.ftlc()%] = [%=t.name%]()
             self.[%=t.name.ftlc()%].workflow = self

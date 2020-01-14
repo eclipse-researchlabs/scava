@@ -7,7 +7,10 @@ import threading
 [%}%]
 from crossflow.[%=package%].[%=t.name.toSnakeCaseLower()%] import [%=t.name%]Base
 
-[% for(i in t.output.collect(i|i.type).asOrderedSet().sortBy(i|i.name)) {%]
+[% for (i in t.input.collect(s|s.type)) {%]
+from crossflow.[%=package%].[%=i.name.toSnakeCaseLower()%] import [%=i.name%]
+[%}%]
+[% for (i in t.output.collect(s|s.type)) { %]
 from crossflow.[%=package%].[%=i.name.toSnakeCaseLower()%] import [%=i.name%]
 [%}%]
 

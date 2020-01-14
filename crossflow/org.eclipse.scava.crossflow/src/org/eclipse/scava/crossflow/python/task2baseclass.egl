@@ -6,8 +6,11 @@ import time
 from crossflow.runtime import FailedJob, Task
 from crossflow.[%=package%].[%=w.name.toSnakeCaseLower()%]_tasks import [%=w.name%]Tasks
 
-[% for (t in outputTypes) { %]
-from crossflow.[%=package%].[%=t.name.toSnakeCaseLower()%] import [%=t.name%]
+[% for (i in t.input.collect(s|s.type)) {%]
+from crossflow.[%=package%].[%=i.name.toSnakeCaseLower()%] import [%=i.name%]
+[%}%]
+[% for (i in t.output.collect(s|s.type)) { %]
+from crossflow.[%=package%].[%=i.name.toSnakeCaseLower()%] import [%=i.name%]
 [%}%]
 
 

@@ -40,6 +40,12 @@ for (f in t.~fields) {
         	continue;
         case "float":
             f.~pyType = "float";
+        
+        // Boolean
+        case "Boolean":
+            continue;
+        case "boolean":
+            f.~pyType = "bool";
             
         // Default
         default:
