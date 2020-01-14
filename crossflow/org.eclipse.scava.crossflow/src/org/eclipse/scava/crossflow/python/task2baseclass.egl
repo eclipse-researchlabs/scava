@@ -1,15 +1,16 @@
 [%import "../util.eol";
 import "pythonUtil.eol";%]
-import multiprocessing
+from concurrent.futures import Future
+from concurrent.futures.thread import ThreadPoolExecutor
 import time
 
 from crossflow.runtime import FailedJob, Task
 from crossflow.[%=package%].[%=w.name.toSnakeCaseLower()%]_tasks import [%=w.name%]Tasks
 
-[% for (i in t.input.collect(s|s.type)) {%]
+[% for (i in t.input.collect(s|s.type).asSet()) {%]
 from crossflow.[%=package%].[%=i.name.toSnakeCaseLower()%] import [%=i.name%]
 [%}%]
-[% for (i in t.output.collect(s|s.type)) { %]
+[% for (i in t.output.collect(s|s.type).asSet()) { %]
 from crossflow.[%=package%].[%=i.name.toSnakeCaseLower()%] import [%=i.name%]
 [%}%]
 
@@ -25,6 +26,8 @@ class [%=t.name%]Base(Task):
     def __init__(self):
         super().__init__()
         
+        self._current_future: Future = None
+        
         # Streams
         [%for (s in t.output) { %]
         self.[%=s.name.ftlc()%] = None
@@ -36,7 +39,8 @@ class [%=t.name%]Base(Task):
     def name(self) -> str:
         return self.__class__.task_enum.value
 
-    def get_total_outputs(self):
+    @property
+    def total_outputs(self) -> int:
         return sum([[%
         for (s in t.output) {
             out.print("self._has_sent_to_" + s.name.toSnakeCaseLower());
@@ -53,6 +57,7 @@ class [%=t.name%]Base(Task):
         return self.[%=o.name.ftlc()%]
     
     def sendTo[%=o.name%](self, [%=o.type.name.ftlc()%]):
+        [%=o.type.name.ftlc()%]._current_root_ids = self._current_root_ids
         [%=o.type.name.ftlc()%].cacheable = self.cacheable
         [%if(t.isTypeOf(Source)){%]
         [%=o.type.name.ftlc()%].transactional = False
@@ -61,47 +66,43 @@ class [%=t.name%]Base(Task):
     
     [%}%]
     [%for (s in t.input) { %]
-    def consume[%=s.name%]WithNotifications(self, [%=s.type.name.ftlc()%]):
+    def consume[%=s.name%]WithNotifications(self, [%=s.type.name.ftlc()%]: [%=s.type.name%]):
         [%for (o in t.output) {%]
         self._has_sent_to_[%=o.name.toSnakeCaseLower()%] = False
         [%}%]
         
         try:
-            def consumer():
-                self.workflow.set_task_in_progress(self, [%=s.type.name.ftlc()%].job_id)
+            self._current_job_id = [%=s.type.name.ftlc()%].job_id
+            self._current_root_ids = [%=s.type.name.ftlc()%].root_ids if [%=s.type.name.ftlc()%].root_ids else [%=s.type.name.ftlc()%].job_id
+            self.workflow.set_task_in_progress(self, [%=s.type.name.ftlc()%].job_id)
+            def consume():
             [%if (t.isSingleOut()) {%]
                 result = self.consume[%=s.name%]([%=s.type.name.ftlc()%])
                 if result is not None:
                     if self.cacheable:
-                        result.correlation_id([%=s.type.name.ftlc()%].job_id)
+                        result.correlation_id = [%=s.type.name.ftlc()%].job_id
                     result.transactional = False
                     self.sendTo[%=t.output.first.name%](result)
             [%}else {%]
                 self.consume[%=s.name%]([%=s.type.name.ftlc()%])
                 
                 [%for (o in t.output) {
-                    var conf = o.name.toSnakeCaseLower() + "_conf";%]
-                [%=conf%] = [%=t.output.first.type.name%]()
-                [%=conf%].correlation_id([%=s.type.name.ftlc()%].job_id)
-                [%=conf%].is_transaction_success_message = True
-                [%=conf%].total_outputs = self.get_total_outputs()
+                    var confirmation = o.name.toSnakeCaseLower() + "_confirmation";%]
+                [%=confirmation%] = [%=t.output.first.type.name%]()
+                [%=confirmation%].correlation_id = [%=s.type.name.ftlc()%].job_id
+                [%=confirmation%].is_transaction_success_message = True
+                [%=confirmation%].total_outputs = self.total_outputs
                 if self._has_sent_to_[%=o.name.toSnakeCaseLower()%]:
-                    self.sendTo[%=o.name%]([%=conf%])
+                    self.sendTo[%=o.name%]([%=confirmation%])
                     
                 [%}
             }%]
-            
-            process = multiprocessing.Process(target=consumer)
-            process.start()
-            timeout = int([%=s.type.name.ftlc()%].timeout) if int([%=s.type.name.ftlc()%].timeout) > 0 else int(self.timeout)
-            
-            if timeout > 0:
-                process.join(timeout)
-                if process.is_alive():
-                    process.terminate()
-                    raise TimeoutError
-            else:
-                process.join()
+
+            with ThreadPoolExecutor(max_workers=1) as executor:
+                self._current_future = executor.submit(consume)
+                
+            timeout = [%=s.type.name.ftlc()%].timeout if int([%=s.type.name.ftlc()%].timeout) > 0 else self._timeout
+            self._current_future.result(timeout if timeout > 0 else None)
 
         # Timeout reached
         except TimeoutError as ex:
@@ -126,10 +127,13 @@ class [%=t.name%]Base(Task):
         finally:
             try:
                 self.workflow.set_task_waiting(self)
+                self._current_job_id = None
+                self._current_root_ids = None
+                self._current_future = None
             except Exception as ex:
                 self.workflow.local_logger.exception("")
                 self.workflow.report_internal_exception(ex)
-    
+
     def consume[%=s.name%](self, [%=s.type.name.ftlc()%]):
         pass
     

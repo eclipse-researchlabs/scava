@@ -10,6 +10,7 @@ ActiveMQ session manager """
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from concurrent.futures import Future
 import csv
 import datetime
 from enum import Enum, auto
@@ -178,6 +179,7 @@ class ControlSignals(Enum):
     ACKNOWLEDGEMENT = auto()
     WORKER_ADDED = auto()
     WORKER_REMOVED = auto()
+    CANCEL_JOB = auto()
 
     def __str__(self):
         return self.name
@@ -386,6 +388,9 @@ class Task(ABC):
         self._timeout = timeout
         self._workflow = workflow
         self._subscription_id = uuid.uuid4().int
+        self._current_job_id = None
+        self._current_root_ids = None
+        self._current_future: Future = None
 
     @property
     def task_id(self) -> str:
@@ -434,6 +439,10 @@ class Task(ABC):
 
     def task_unblocked(self):
         self._workflow.set_task_unblocked(self)
+        
+    def cancel_job(self, payload: str) -> bool:
+        if self._current_job_id == payload and self._current_future is not None:
+            self._current_future.cancel()
 
     def close(self):
         """Optional cleanup method to execute on close"""
@@ -1124,6 +1133,7 @@ class Workflow(ABC):
         self._enable_prefetch = enable_prefetch
 
         # Task Tracking
+        self._tasks = []
         self._active_jobs = []
         self._active_streams = []
         self._active_worker_ids = []  # TODO: is this needed in workers?
@@ -1144,11 +1154,13 @@ class Workflow(ABC):
         self._temp_directory = None
 
         # Global streams
-        self._task_status_topic = BuiltinStream("TaskStatusPublisher", self)
-        self._control_topic = BuiltinStream("ControlTopic", self)
+        self._task_status_topic: BuiltinStream = BuiltinStream(
+            "TaskStatusPublisher", self
+        )
+        self._control_topic: BuiltinStream = BuiltinStream("ControlTopic", self)
         self._log_topic = BuiltinStream("LogTopic", self)
-        self._failed_jobs_topic = BuiltinStream("FailedJobs", self)
-        self._internal_exceptions_queue = BuiltinStream(
+        self._failed_jobs_topic: BuiltinStream = BuiltinStream("FailedJobs", self)
+        self._internal_exceptions_queue: BuiltinStream = BuiltinStream(
             "InternalExceptions", self, False
         )
 
@@ -1404,12 +1416,16 @@ class Workflow(ABC):
         self._active_worker_ids.append(worker_id)
 
     # noinspection PyBroadException
-    def consume_control_signal(self, signal: ControlSignals):
+    def consume_control_signal(self, signal: ControlSignal):
         if signal.signal == ControlSignals.TERMINATION:
             try:
                 self.terminate()
             except Exception:
                 self.local_logger.exception("Failed to handle TERMINATION signal")
+        
+        if signal.signal == ControlSignals.CANCEL_JOB:
+            self._cancel_local_jobs(signal.senderId)
+            self.local_logger(f"Cancel job called for {signal.senderId}")
 
     def cancel_termination(self):
         # TODO: is this needed? Should the master not control termination?
@@ -1493,6 +1509,20 @@ class Workflow(ABC):
         self._task_status_topic.send(
             TaskStatus(TaskStatuses.INPROGRESS, caller.task_id, "")
         )
+
+    def cancel_all_jobs(self, payload: str):
+        try:
+            self.control_topic.send(ControlSignal(ControlSignals.CANCEL_JOB, payload))
+        except:
+            self.local_logger.exception(
+                f"Error sending Job cancellation signal {payload}"
+            )
+
+    def _cancel_local_jobs(self, payload: str) -> bool:
+        ret = False
+        for t in self._tasks:
+            ret = t.cancel_job(payload) or ret
+        return ret
 
 
 class FailedJob(object):

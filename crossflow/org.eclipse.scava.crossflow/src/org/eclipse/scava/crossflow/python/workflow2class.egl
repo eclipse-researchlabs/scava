@@ -64,13 +64,12 @@ class [%=w.name%](Workflow):
         [%}%]
 
         # Tasks
-        self.tasks = []
         [%for (t in w.getPyTasks()){%]
         self.[%=t.name.ftlc()%] = None
         if [%=w.name%]Tasks.[%=t.name.toSnakeCaseUpper()%] not in self._excluded_tasks:
             self.[%=t.name.ftlc()%] = [%=t.name%]()
             self.[%=t.name.ftlc()%].workflow = self
-            self.tasks.append(self.[%=t.name.ftlc()%])
+            self._tasks.append(self.[%=t.name.ftlc()%])
         [%}%]
 
     def excluded_tasks(self, tasks=[]):
