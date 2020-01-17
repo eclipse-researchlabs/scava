@@ -25,9 +25,7 @@ class [%=t.name%]Base(Task):
 
     def __init__(self):
         super().__init__()
-        
-        self._current_future: Future = None
-        
+                
         # Streams
         [%for (s in t.output) { %]
         self.[%=s.name.ftlc()%] = None
@@ -72,7 +70,7 @@ class [%=t.name%]Base(Task):
         [%}%]
         
         try:
-            self._current_job_id = [%=s.type.name.ftlc()%].job_id
+            self._active_job = [%=s.type.name.ftlc()%]
             self._current_root_ids = [%=s.type.name.ftlc()%].root_ids if [%=s.type.name.ftlc()%].root_ids else [%=s.type.name.ftlc()%].job_id
             self.workflow.set_task_in_progress(self, [%=s.type.name.ftlc()%].job_id)
             def consume():
@@ -99,10 +97,10 @@ class [%=t.name%]Base(Task):
             }%]
 
             with ThreadPoolExecutor(max_workers=1) as executor:
-                self._current_future = executor.submit(consume)
+                self._active_future = executor.submit(consume)
                 
             timeout = [%=s.type.name.ftlc()%].timeout if int([%=s.type.name.ftlc()%].timeout) > 0 else self._timeout
-            self._current_future.result(timeout if timeout > 0 else None)
+            self._active_future.result(timeout if timeout > 0 else None)
 
         # Timeout reached
         except TimeoutError as ex:
@@ -127,9 +125,9 @@ class [%=t.name%]Base(Task):
         finally:
             try:
                 self.workflow.set_task_waiting(self)
-                self._current_job_id = None
+                self._active_job = None
                 self._current_root_ids = None
-                self._current_future = None
+                self._active_future = None
             except Exception as ex:
                 self.workflow.local_logger.exception("")
                 self.workflow.report_internal_exception(ex)

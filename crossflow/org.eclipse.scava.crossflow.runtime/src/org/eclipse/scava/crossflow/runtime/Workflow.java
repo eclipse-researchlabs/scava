@@ -329,8 +329,8 @@ public abstract class Workflow<E extends Enum<E>> {
 				}
 
 				if (signal.getSignal().equals(ControlSignals.CANCEL_JOB)) {
+					System.out.println("Cancel Request received with payload: " + signal.getSenderId());
 					cancelLocalJobs(signal.getSenderId());
-					System.out.println("cancel job called on: " + getName() + " for job: " + signal.getSenderId());
 				}
 			}
 

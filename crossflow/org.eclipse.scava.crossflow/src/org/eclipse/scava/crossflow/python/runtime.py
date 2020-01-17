@@ -388,9 +388,9 @@ class Task(ABC):
         self._timeout = timeout
         self._workflow = workflow
         self._subscription_id = uuid.uuid4().int
-        self._current_job_id = None
+        self._active_job: Job = None
         self._current_root_ids = None
-        self._current_future: Future = None
+        self._active_future: Future = None
 
     @property
     def task_id(self) -> str:
@@ -433,6 +433,14 @@ class Task(ABC):
         :rtype: str
         """
         pass
+    
+    @property
+    def active_job(self) -> "Job":
+        return self._active_job
+    
+    @property
+    def active_future(self) -> Future:
+        return self._active_future
 
     def task_blocked(self, reason):
         self._workflow.set_task_blocked(reason)
@@ -441,8 +449,9 @@ class Task(ABC):
         self._workflow.set_task_unblocked(self)
         
     def cancel_job(self, payload: str) -> bool:
-        if self._current_job_id == payload and self._current_future is not None:
-            self._current_future.cancel()
+        if self.active_job is not None and self.active_job.job_id == payload:
+            return self._active_future.cancel()
+        return False
 
     def close(self):
         """Optional cleanup method to execute on close"""
@@ -1425,7 +1434,7 @@ class Workflow(ABC):
         
         if signal.signal == ControlSignals.CANCEL_JOB:
             self._cancel_local_jobs(signal.senderId)
-            self.local_logger(f"Cancel job called for {signal.senderId}")
+            self.local_logger.info(f"Cancel job called for {signal.senderId}")
 
     def cancel_termination(self):
         # TODO: is this needed? Should the master not control termination?

@@ -69,7 +69,7 @@ public abstract class [%=t.name%]Base extends Task [%if(t.input.notEmpty()){%] i
 	}
 
 	public void sendTo[%=s.name%]([%=s.type.name%] [%=s.type.name.ftlc()%]) [%if(s.inputOf.isEmpty()){%]throws Exception [%}%]{
-		[%=s.type.name.ftlc()%].addRootId(currentRootIds);
+		[%=s.type.name.ftlc()%].addRootId(activeRootIds);
 		[%=s.type.name.ftlc()%].setCacheable(cacheable);
 			[%if(t.isTypeOf(CrossflowLanguageModel!Source)){%]
 		[%=s.type.name.ftlc()%].setTransactional(false);
@@ -194,8 +194,10 @@ public void consume[%=self.name%]WithNotifications([%=self.type.name%] [%=self.t
 	if (not (self.isConfigurationChannel() or t.isSource() or t.isSink())) {%]
 	try {
 		workflow.get[%=t.name%]s().getSemaphore().acquire();
-		currentRootIds = [%=self.type.name.ftlc()%].getRootIds();
-		if (currentRootIds.isEmpty()) currentRootIds = Collections.singleton([%=self.type.name.ftlc()%].getJobId());
+		
+		// Task Instance State
+		activeRootIds = [%=self.type.name.ftlc()%].getRootIds();
+		if (activeRootIds.isEmpty()) activeRootIds = Collections.singleton([%=self.type.name.ftlc()%].getJobId());
 	} catch (Exception e) {
 		workflow.reportInternalException(e);
 	}
@@ -232,8 +234,8 @@ operation CrossflowLanguageModel!Stream createEndOfConsumeMethod() {%]
 		} finally {
 			try {
 				// cleanup instance
-				currentRootIds = Collections.emptySet();
-				currentRunnables = Collections.emptyMap();
+				activeRootIds = Collections.emptySet();
+				activeRunnables = Collections.emptyMap();
 				
 				[%if (not (self.isConfigurationChannel() or t.isKindOf(CrossflowLanguageModel!Source) or t.isKindOf(CrossflowLanguageModel!Sink))){%]
 				workflow.get[%=t.name%]s().getSemaphore().release();
@@ -249,12 +251,13 @@ operation CrossflowLanguageModel!Stream createEndOfConsumeMethod() {%]
 	};
 	
 	//track current job execution (for cancellation)
-	ListenableFuture<?> consumerFuture = workflow.get[%=t.name%]s().getExecutor().submit(consumer);
-	currentRunnables = Collections.singletonMap([%=self.type.name.ftlc()%].getJobId(),consumerFuture);	
+	ListenableFuture<?> future = workflow.get[%=t.name%]s().getExecutor().submit(consumer);
+	activeRunnables = Collections.singletonMap([%=self.type.name.ftlc()%], future);	
+	
 	
 	long timeout = [%=self.type.name.ftlc()%].getTimeout() > 0 ? [%=self.type.name.ftlc()%].getTimeout() : this.timeout;
 	if (timeout > 0) {
-		Futures.withTimeout(consumerFuture, timeout, TimeUnit.SECONDS, workflow.getTimeoutManager());
+		Futures.withTimeout(future, timeout, TimeUnit.SECONDS, workflow.getTimeoutManager());
 	}
 
 	[%}%]
