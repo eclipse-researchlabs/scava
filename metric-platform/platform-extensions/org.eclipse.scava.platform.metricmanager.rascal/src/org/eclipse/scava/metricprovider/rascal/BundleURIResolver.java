@@ -129,4 +129,9 @@ ISourceLocationInput, ILogicalSourceLocationResolver {
 		}
 		return null;
 	}
+
+	@Override
+	public void setLastModified(ISourceLocation uri, long timestamp) throws IOException {
+		URIResolverRegistry.getInstance().setLastModified(resolve(uri), timestamp);
+	}
 }
