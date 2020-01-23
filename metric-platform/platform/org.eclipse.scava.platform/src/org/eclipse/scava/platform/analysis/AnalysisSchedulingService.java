@@ -91,7 +91,7 @@ public class AnalysisSchedulingService {
 			}
 		}
 
-		Double progress = ((dailyMetrics * (currentDay - 1)) + currentMetrics) / (dailyMetrics * totalDays) * 100;
+		Double progress = Math.abs(((dailyMetrics * (currentDay - 1)) + currentMetrics) / (dailyMetrics * totalDays) * 100);
 		task.getScheduling().setProgress(progress.intValue());
 
 		this.repository.sync();
