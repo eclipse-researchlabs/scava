@@ -2,6 +2,7 @@
 **/githubprivate\.properties
 
 **/bin/
+**/target/
 
 **/\.idea/
 **/docker/data/
@@ -11,7 +12,7 @@
 **/*\.rar
 
 **/src-gen
-**/src-gen-py
+**/py-gen
 **/activemq-data
 
 *.pyc

@@ -121,6 +121,11 @@ public abstract class Workflow<E extends Enum<E>> {
 	protected File runtimeModel = new File("").getParentFile();
 	protected File tempDirectory = null;
 
+	
+	@Parameter(names = {
+	"-disableStreamMetadataTopic" }, description = "Flag to disable data being sent to the Stream Metadata Topic")
+	protected boolean enableStreamMetadataTopic = true;
+	
 	/*
 	 * TRANSPORT
 	 */
@@ -133,7 +138,6 @@ public abstract class Workflow<E extends Enum<E>> {
 	 * period: {@link streamMetadataPeriod}
 	 */
 	protected BuiltinStream<StreamMetadataSnapshot> streamMetadataTopic = null;
-	protected boolean enableStreamMetadataTopic = true;
 
 	/**
 	 * Optional throttled version of {@link taskStatusTopic} that will only send
