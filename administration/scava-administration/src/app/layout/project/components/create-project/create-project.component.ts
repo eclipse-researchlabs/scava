@@ -49,7 +49,7 @@ export class CreateProjectComponent implements OnInit {
     return ['', Validators.required];
   }
 
-  addInformationSource(source: string, type: string) {
+  addInformationSource(source: string, type: string, loginMode?: string) {
     const formArray = <FormArray>this.form.get(source);
     switch (source) {
       case 'vcs':
@@ -93,7 +93,7 @@ export class CreateProjectComponent implements OnInit {
 
   }
 
-  createCommunicationChannels(type: string) {
+  createCommunicationChannels(type: string, loginMode?: string) {
     switch (type) {
       case 'nntp':
         return this.formBuilder.group({
@@ -143,17 +143,24 @@ export class CreateProjectComponent implements OnInit {
           'clientId': ['', Validators.required],
           'clientSecret': ['', Validators.required],
         });
-      case 'documentation systematic':
+      case 'documentation_systematic_no_login':
         return this.formBuilder.group({
-          'type': [type],
-          'loginOption': [''],
-          'url': [''],
+          'type': ['documentation systematic'],
+          'loginOption': ['option1'],
+          'url': ['', Validators.required],
+          'executionFrequency': ['']
+        });
+      case 'documentation_systematic_with_login':
+        return this.formBuilder.group({
+          'type': ['documentation systematic'],
+          'loginOption': ['option2'],
+          'url': ['', Validators.required],
           'executionFrequency': [''],
-          'loginURL': [''],
+          'loginURL': ['', Validators.required],
           'username': [''],
-          'usernameFieldName': [''],
+          'usernameFieldName': ['', Validators.required],
           'password': [''],
-          'passwordFieldName': ['']
+          'passwordFieldName': ['', Validators.required]
         });
       default:
         break;
@@ -235,6 +242,7 @@ export class CreateProjectComponent implements OnInit {
     this.project.homePage = this.saveControlProject('homePage');
     this.project.vcsRepositories = this.saveInformationSources('vcs');
     this.project.bts = this.saveInformationSources('bts');
+    debugger
     this.project.communication_channels = this.saveInformationSources('communication_channels');
     this.createProjectService.createProject(this.project).subscribe(resp => {
       let project: IProject = resp as IProject;

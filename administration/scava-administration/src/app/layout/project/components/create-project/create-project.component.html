@@ -117,11 +117,19 @@
                                 (click)="addInformationSource('communication_channels', 'eclipseForum')">
                                 <span>Eclipse Forum</span>
                             </button>
+                        </li>
+                    </ul>
+                    <ul class="pagination">
+                        <li>
+                            <button type="button" class="btn btn-outline-dark btn-sm"
+                                (click)="addInformationSource('communication_channels', 'documentation_systematic_no_login')">
+                                <span>Documentation Systematic - No Login</span>
+                            </button>
                         </li>&nbsp;
                         <li>
                             <button type="button" class="btn btn-outline-dark btn-sm"
-                                (click)="addInformationSource('communication_channels', 'documentation systematic')">
-                                <span>Documentation Systematic</span>
+                                (click)="addInformationSource('communication_channels', 'documentation_systematic_with_login')">
+                                <span>Documentation Systematic - With Login</span>
                             </button>
                         </li>
                     </ul>
@@ -429,56 +437,53 @@
                                                 name="clientSecret" formControlName="clientSecret">
                                         </div>
                                     </div>
-                                    <div *ngIf="form.get('communication_channels').value[i].type === 'documentation systematic'">
-                                        <div class="form-group">
-                                            <label for="loginOption">Login necessary ?</label> <br>
-                                            <select name="loginOption" formControlName="loginOption" (click)="toggleSystematicLogin()" required>
-                                                <option [disabled]="noLogin == 'option1'" value="option1">No Login</option>
-                                                <option [disabled]="noLogin == '' || noLogin == 'option2'" value="option2">With Login</option>
-                                            </select>
-                                        </div>
+                                    <div *ngIf="form.get('communication_channels').value[i].type === 'documentation systematic' && form.get('communication_channels').value[i].loginOption == 'option1'">
                                         <div class="form-group" [hidden]=true>
                                             <input type="text" class="form-control" id="type" name="type" formControlName="type">
                                         </div>
-                                        <div *ngIf="noLogin == 'option1'">
-                                            <div class="form-group">
-                                                <label for="url">Url</label>
-                                                <input type="text" class="form-control" id="url" name="url" formControlName="url" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="executionFrequency">Execution Frequency <small>(optional)</small></label>
-                                                <input type="number" class="form-control" id="executionFrequency" name="executionFrequency" formControlName="executionFrequency">
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="url">Url</label>
+                                            <input type="text" class="form-control" id="url" name="url" formControlName="url" required>
                                         </div>
-                                        <div *ngIf="noLogin == 'option2'">
-                                            <div class="form-group">
-                                                <label for="url">Url</label>
-                                                <input type="text" class="form-control" id="url" name="url" formControlName="url" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="executionFrequency">Execution Frequency <small>(optional)</small></label>
-                                                <input type="number" class="form-control" id="executionFrequency" name="executionFrequency" formControlName="executionFrequency">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="loginURL">Login Url</label>
-                                                <input type="text" class="form-control" id="loginURL" name="loginURL" formControlName="loginURL" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="username">Username <small>(optional)</small></label>
-                                                <input type="text" class="form-control" id="username" name="username" formControlName="username">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="usernameFieldName">Username Field Name</label>
-                                                <input type="text" class="form-control" id="usernameFieldName" name="usernameFieldName" formControlName="usernameFieldName" required>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="password">Password <small>(optional)</small></label>
-                                                <input type="text" class="form-control" id="password" name="password" formControlName="password">
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="passwordFieldName">Password Field Name</label>
-                                                <input type="text" class="form-control" id="passwordFieldName" name="passwordFieldName" formControlName="passwordFieldName" required>
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="executionFrequency">Execution Frequency <small>(optional)</small></label>
+                                            <input type="number" class="form-control" id="executionFrequency" name="executionFrequency" formControlName="executionFrequency">
+                                        </div>
+                                    </div>
+                                    <div *ngIf="form.get('communication_channels').value[i].type === 'documentation systematic' && form.get('communication_channels').value[i].loginOption == 'option2'">
+                                        <div class="form-group" [hidden]=true>
+                                            <input type="text" class="form-control" id="type" name="type" formControlName="type">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="url">Url</label>
+                                            <input type="text" class="form-control" id="url" name="url" formControlName="url" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="executionFrequency">Execution Frequency <small>(optional)</small></label>
+                                            <input type="number" class="form-control" id="executionFrequency" name="executionFrequency"
+                                                formControlName="executionFrequency">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="loginURL">Login Url</label>
+                                            <input type="text" class="form-control" id="loginURL" name="loginURL" formControlName="loginURL" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="username">Username <small>(optional)</small></label>
+                                            <input type="text" class="form-control" id="username" name="username" formControlName="username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="usernameFieldName">Username Field Name</label>
+                                            <input type="text" class="form-control" id="usernameFieldName" name="usernameFieldName"
+                                                formControlName="usernameFieldName" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password">Password <small>(optional)</small></label>
+                                            <input type="text" class="form-control" id="password" name="password" formControlName="password">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="passwordFieldName">Password Field Name</label>
+                                            <input type="text" class="form-control" id="passwordFieldName" name="passwordFieldName"
+                                                formControlName="passwordFieldName" required>
                                         </div>
                                     </div>
                                 </div>
