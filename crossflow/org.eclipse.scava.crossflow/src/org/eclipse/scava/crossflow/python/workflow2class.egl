@@ -174,10 +174,10 @@ if __name__ == '__main__':
 @template
 operation Task setup() {%]
     [%for (i in self.input) { %]
-    self.[%=i.name.ftlc()%].add_consumer(self.[%=self.name.ftlc()%], "[%=self.name%]");            
+    self.[%=i.name.ftlc()%].add_consumer(self.[%=self.name.ftlc()%], "[%=self.name%]")
     [%}%]
     [%for (o in self.output) { %]
-    self.[%=self.name.ftlc()%].set[%=o.name%](self.[%=o.name.ftlc%]);
+    self.[%=self.name.ftlc()%].[%=o.name.toSnakeCaseLower()%]= self.[%=o.name.ftlc%]
     [%}%]
 [%}
 

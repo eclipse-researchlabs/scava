@@ -150,7 +150,7 @@ operation String toPath() : String {
 }
 
 operation Task appliesTo() : Boolean {
-	return self.getWorkflow().appliesTo() and self.hasLanguage("python");
+	return self.getWorkflow().appliesTo() and self.hasLanguage("python") and not (self.isTypeOf(Source) or self.isTypeOf(Sink));
 }
 
 operation Task getOutputTypes() : Set {

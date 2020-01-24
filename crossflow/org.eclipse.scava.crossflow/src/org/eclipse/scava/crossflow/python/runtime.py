@@ -24,7 +24,7 @@ import tempfile
 import threading
 import time
 from traceback import TracebackException
-from typing import Any, Iterable, Union
+from typing import Any, Dict, Iterable, Set, Union
 import uuid
 import warnings
 
@@ -215,6 +215,171 @@ class ControlSignal:
         return False
 
 
+class Job:
+    def __init__(
+        self,
+        job_id: str = None,
+        correlation_id: Union["Job", str] = None,
+        root_ids: Union[list, set] = [],
+        destination: str = None,
+        total_outputs: int = 0,
+        cached: bool = False,
+        cacheable: bool = True,
+        failures: int = 0,
+        timeout: int = 0,
+        transactional: bool = True,
+        is_transaction_success_message: bool = False,
+    ):
+
+        self._job_id = str(uuid.uuid4()) if job_id is None else job_id
+        self._correlation_id = (
+            correlation_id.correlation_id
+            if isinstance(correlation_id, Job)
+            else correlation_id
+        )
+        self._root_ids = root_ids if isinstance(root_ids, set) else set(root_ids)
+        self._destination = destination
+        self._total_outputs = total_outputs
+        self._cached = cached
+        self._cacheable = cacheable
+        self._failures = failures
+        self._timeout = timeout
+        self._transactional = transactional
+        self._is_transaction_success_message = is_transaction_success_message
+
+    def __str__(self):
+        return str(self.__class__) + ": " + str(self.__dict__)
+
+    @property
+    def job_id(self) -> str:
+        return self._job_id
+
+    @job_id.setter
+    def job_id(self, job_id: str):
+        self._job_id = job_id
+
+    @property
+    def correlation_id(self) -> str:
+        return self._correlation_id
+
+    @correlation_id.setter
+    def correlation_id(self, correlation_id: str):
+        self._correlation_id = correlation_id
+
+    @property
+    def root_ids(self) -> set:
+        return self._root_ids
+
+    @root_ids.setter
+    def root_ids(self, root_ids: Union[list, set]):
+        if isinstance(root_ids, set):
+            self._root_ids = root_ids
+        elif isinstance(root_ids, list):
+            self._root_ids = set(root_ids)
+        else:
+            raise AttributeError("Must be a list or set")
+
+    @property
+    def destination(self) -> str:
+        return self._destination
+
+    @destination.setter
+    def destination(self, destination: str):
+        self._destination = destination
+
+    @property
+    def total_outputs(self) -> int:
+        return self._total_outputs
+
+    @total_outputs.setter
+    def total_outputs(self, total_outputs: int):
+        self._total_outputs = total_outputs
+
+    @property
+    def cached(self) -> bool:
+        return self._cached
+
+    @cached.setter
+    def cached(self, cached: bool):
+        self._cached = cached
+
+    @property
+    def cacheable(self) -> bool:
+        return self._cacheable
+
+    @cacheable.setter
+    def cacheable(self, cacheable: bool):
+        self._cacheable = cacheable
+
+    @property
+    def failures(self) -> int:
+        return self._failures
+
+    @failures.setter
+    def failures(self, failures: int):
+        self._failures = failures
+
+    @property
+    def timeout(self) -> int:
+        return self._timeout
+
+    @timeout.setter
+    def timeout(self, timeout: int):
+        self._timeout = timeout
+
+    @property
+    def transactional(self) -> bool:
+        return self._transactional
+
+    @transactional.setter
+    def transactional(self, transactional: bool):
+        self._transactional = transactional
+
+    @property
+    def is_transaction_success_message(self) -> bool:
+        return self._is_transaction_success_message
+
+    @is_transaction_success_message.setter
+    def is_transaction_success_message(self, is_transaction_success_message: bool):
+        self._is_transaction_success_message = is_transaction_success_message
+
+    def getPickleBytes(self):
+        job_id = self.job_id
+        correlation_id = self.correlation_id
+        root_ids = self.root_ids
+        cached = self.cached
+        cacheable = self.cacheable
+        failures = self.failures
+        timeout = self.timeout
+
+        self.job_id = None
+        self.correlation_id = None
+        self.root_ids = []
+        self.cached = False
+        self.cacheable = True
+        self.failures = 0
+        self.timeout = 0
+
+        pickleBytes = pickle.dumps(self)
+
+        self.job_id = job_id
+        self.correlation_id = correlation_id
+        self.root_ids = root_ids
+        self.cached = cached
+        self.cacheable = cacheable
+        self.failures = failures
+        self.timeout = timeout
+
+        return pickleBytes
+
+    def getHash(self):
+        # FIXME if two outputs have the same signature (aka if a task outputs two
+        # identical elements) then duplicates are lost!
+        h = hashlib.md5()
+        h.update(self.getPickleBytes())
+        return str(h.digest())
+
+
 class CSVParser(object):
     def __init__(self, path):
         self.parser = csv.DictReader(path)
@@ -388,9 +553,11 @@ class Task(ABC):
         self._timeout = timeout
         self._workflow = workflow
         self._subscription_id = uuid.uuid4().int
+        self._sent: Dict[str, bool] = {}
         self._active_job: Job = None
-        self._current_root_ids = None
         self._active_future: Future = None
+        import multiprocessing
+        self._active_process: multiprocessing.Process = None
 
     @property
     def task_id(self) -> str:
@@ -433,21 +600,39 @@ class Task(ABC):
         :rtype: str
         """
         pass
-    
+
     @property
-    def active_job(self) -> "Job":
+    def active_job(self) -> Job:
         return self._active_job
+        
+    @active_job.setter
+    def active_job(self, active_job: Job):
+        self._active_job = active_job
     
     @property
     def active_future(self) -> Future:
         return self._active_future
+        
+    @active_future.setter
+    def active_future(self, active_future: Future):
+        self._active_future = active_future        
+
+    @property
+    def active_root_ids(self) -> Set[str]:
+        return (
+            self.active_job.root_ids if self.active_job else set(self.active_job.job_id)
+        )
+    
+    @property
+    def total_outputs(self) -> int:
+        return list(self._sent.values()).count(True)
 
     def task_blocked(self, reason):
         self._workflow.set_task_blocked(reason)
 
     def task_unblocked(self):
         self._workflow.set_task_unblocked(self)
-        
+
     def cancel_job(self, payload: str) -> bool:
         if self.active_job is not None and self.active_job.job_id == payload:
             return self._active_future.cancel()
@@ -455,7 +640,17 @@ class Task(ABC):
 
     def close(self):
         """Optional cleanup method to execute on close"""
-        pass
+        pass        
+    
+    def _pre_send(self, job: Job) -> Job:
+        """
+        Helper method for setting common Job fields before send
+        """
+        job.root_ids = self.active_root_ids
+        job.cacheable = self.cacheable
+        if self.cacheable:
+            job.correlation_id = self.active_job.correlation_id
+        return job
 
 
 class MessageListener(stomp.ConnectionListener):
@@ -681,171 +876,6 @@ class CacheManagerTask(Task):
     @property
     def name(self) -> str:
         return "CacheManagerTask"
-
-
-class Job:
-    def __init__(
-        self,
-        job_id: str = None,
-        correlation_id: Union["Job", str] = None,
-        root_ids: Union[list, set] = [],
-        destination: str = None,
-        total_outputs: int = 0,
-        cached: bool = False,
-        cacheable: bool = True,
-        failures: int = 0,
-        timeout: int = 0,
-        transactional: bool = True,
-        is_transaction_success_message: bool = False,
-    ):
-
-        self._job_id = str(uuid.uuid4()) if job_id is None else job_id
-        self._correlation_id = (
-            correlation_id.correlation_id
-            if isinstance(correlation_id, Job)
-            else correlation_id
-        )
-        self._root_ids = root_ids if isinstance(root_ids, set) else set(root_ids)
-        self._destination = destination
-        self._total_outputs = total_outputs
-        self._cached = cached
-        self._cacheable = cacheable
-        self._failures = failures
-        self._timeout = timeout
-        self._transactional = transactional
-        self._is_transaction_success_message = is_transaction_success_message
-
-    def __str__(self):
-        return str(self.__class__) + ": " + str(self.__dict__)
-
-    @property
-    def job_id(self) -> str:
-        return self._job_id
-
-    @job_id.setter
-    def job_id(self, job_id: str):
-        self._job_id = job_id
-
-    @property
-    def correlation_id(self) -> str:
-        return self._correlation_id
-
-    @correlation_id.setter
-    def correlation_id(self, correlation_id: str):
-        self._correlation_id = correlation_id
-
-    @property
-    def root_ids(self) -> set:
-        return self._root_ids
-
-    @root_ids.setter
-    def root_ids(self, root_ids: Union[list, set]):
-        if isinstance(root_ids, set):
-            self._root_ids = root_ids
-        elif isinstance(root_ids, list):
-            self._root_ids = set(root_ids)
-        else:
-            raise AttributeError("Must be a list or set")
-
-    @property
-    def destination(self) -> str:
-        return self._destination
-
-    @destination.setter
-    def destination(self, destination: str):
-        self._destination = destination
-
-    @property
-    def total_outputs(self) -> int:
-        return self._total_outputs
-
-    @total_outputs.setter
-    def total_outputs(self, total_outputs: int):
-        self._total_outputs = total_outputs
-
-    @property
-    def cached(self) -> bool:
-        return self._cached
-
-    @cached.setter
-    def cached(self, cached: bool):
-        self._cached = cached
-
-    @property
-    def cacheable(self) -> bool:
-        return self._cacheable
-
-    @cacheable.setter
-    def cacheable(self, cacheable: bool):
-        self._cacheable = cacheable
-
-    @property
-    def failures(self) -> int:
-        return self._failures
-
-    @failures.setter
-    def failures(self, failures: int):
-        self._failures = failures
-
-    @property
-    def timeout(self) -> int:
-        return self._timeout
-
-    @timeout.setter
-    def timeout(self, timeout: int):
-        self._timeout = timeout
-
-    @property
-    def transactional(self) -> bool:
-        return self._transactional
-
-    @transactional.setter
-    def transactional(self, transactional: bool):
-        self._transactional = transactional
-
-    @property
-    def is_transaction_success_message(self) -> bool:
-        return self._is_transaction_success_message
-
-    @is_transaction_success_message.setter
-    def is_transaction_success_message(self, is_transaction_success_message: bool):
-        self._is_transaction_success_message = is_transaction_success_message
-
-    def getPickleBytes(self):
-        job_id = self.job_id
-        correlation_id = self.correlation_id
-        root_ids = self.root_ids
-        cached = self.cached
-        cacheable = self.cacheable
-        failures = self.failures
-        timeout = self.timeout
-
-        self.job_id = None
-        self.correlation_id = None
-        self.root_ids = []
-        self.cached = False
-        self.cacheable = True
-        self.failures = 0
-        self.timeout = 0
-
-        pickleBytes = pickle.dumps(self)
-
-        self.job_id = job_id
-        self.correlation_id = correlation_id
-        self.root_ids = root_ids
-        self.cached = cached
-        self.cacheable = cacheable
-        self.failures = failures
-        self.timeout = timeout
-
-        return pickleBytes
-
-    def getHash(self):
-        # FIXME if two outputs have the same signature (aka if a task outputs two
-        # identical elements) then duplicates are lost!
-        h = hashlib.md5()
-        h.update(self.getPickleBytes())
-        return str(h.digest())
 
 
 class Stream(ABC):
@@ -1431,7 +1461,7 @@ class Workflow(ABC):
                 self.terminate()
             except Exception:
                 self.local_logger.exception("Failed to handle TERMINATION signal")
-        
+
         if signal.signal == ControlSignals.CANCEL_JOB:
             self._cancel_local_jobs(signal.senderId)
             self.local_logger.info(f"Cancel job called for {signal.senderId}")

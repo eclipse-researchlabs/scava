@@ -19,53 +19,28 @@ class [%=t.name%]([%=t.name%]Base):
 
     def __init__(self):
         super().__init__()
-
-    [% // This is a source task
-    if (t.isSource()){%]
-    [%=t.genSource()%]
-    [%} 
-    // This is a consuming task
-    else {%]
-        [% for (i in t.input) {%]
-    [%=i.genConsume(t.isSingleOut())%]
-        [%}
-    }
-
-
-@template
-operation Type genSource() {%]
-def produce(self):
-    def run():
-    [%for (o in self.output) {%]
-        [%=o.genResult(true)%]
+        
+    [%for (s in t.inout) {%]
+    def consume_[%=s.name.toSnakeCaseLower()%](self, input_job: [%=s.type.name%]):
+        print(f"{self.workflow.name}:[%=t.name%]:consume_[%=self.name.toSnakeCaseLower()%] received {input_job}")
+    
+        # TODO: Add impementation here
+        # Send output jobs
+        
+        [%for (o in s.output) {%]
+        [%=o.type.name.toSnakeCase()%]_output = [%=o.type.name%]()
+            [%if (t.isSingleOut()) {%]
+        return [%=o.type.name.toSnakeCase()%]_output
+            [%} else {%]
+        # uncomment to send
+        # self.send_to_[%=o.name.toSnakeCaseLower()%]([%=o.type.name.toSnakeCase()%]_output)
+            [%}
+        }%]
+    
+    def on_consume_[%=s.name.toSnakeCaseLower()%]_timeout(self, input_job: [%=s.type.name%]):
+        super().on_consume_[%=s.name.toSnakeCaseLower()%]_timeout(input_job: [%=s.type.name%])
+        
+    def on_consume_[%=s.name.toSnakeCaseLower()%]_cancelled(self, input_job: [%=s.type.name%]):
+        super().on_consume_[%=s.name.toSnakeCaseLower()%]_cancelled(input_job)
         
     [%}%]
-        threading.Timer(100, run).start()
-    run()
-[%}
-
-@template
-operation Stream genConsume(send : Boolean) {%]
-def consume[%=self.name%](self, [%=self.type.name.toSnakeCaseLower()%]: [%=self.type.name%]):
-    print(f"{self.workflow.name}:[%=t.name%]:consume[%=self.name%] received {[%=self.type.name.toSnakeCaseLower()%]}")
-    
-    # Do work here
-    
-    [%for (o in t.output) {%]
-    [%=o.genResult(send)%]
-
-    [%}%]
-
-[%}
-
-@template
-operation Stream genResult(send : Boolean) {
-    var result = self.name.toSnakeCaseLower() + "_" + self.type.name.toSnakeCaseLower();%]
-[%=result%] = [%=self.type.name%]()
-# modify your result here
-    [%if (send) {%]
-self.sendTo[%=self.name%]([%=result%])
-    [%} else {%]
-return [%=self.name%]
-[%    }
-}%]

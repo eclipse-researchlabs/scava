@@ -44,6 +44,7 @@ public class ConcurrencyWorkflowTests extends WorkflowTests {
 			}
 		}
 		
+		Thread.sleep(5000);
 		workflow.cancelAllJobs(workflow.getSleeper().getJobIds().get(0));
 		waitFor(workflow);
 		

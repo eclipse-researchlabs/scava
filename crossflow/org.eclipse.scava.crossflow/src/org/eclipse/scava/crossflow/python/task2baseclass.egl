@@ -1,16 +1,27 @@
 [%import "../util.eol";
 import "pythonUtil.eol";%]
-from concurrent.futures import Future
-from concurrent.futures.thread import ThreadPoolExecutor
+import logging
+import multiprocessing
 import time
+from abc import abstractmethod
+from concurrent.futures import Future
+from concurrent.futures.process import ProcessPoolExecutor
+from concurrent.futures.thread import ThreadPoolExecutor
+from typing import Dict
 
 from crossflow.runtime import FailedJob, Task
 from crossflow.[%=package%].[%=w.name.toSnakeCaseLower()%]_tasks import [%=w.name%]Tasks
 
-[% for (i in t.input.collect(s|s.type).asSet()) {%]
+[% // Combine imports for in and out
+var types = t.input.collect(s|s.type).asSet();
+types.addAll(t.output.collect(s|s.type));
+for (i in types) {%]
 from crossflow.[%=package%].[%=i.name.toSnakeCaseLower()%] import [%=i.name%]
 [%}%]
-[% for (i in t.output.collect(s|s.type).asSet()) { %]
+[% // Combine Streams
+var streams = t.input.asSet();
+streams.addAll(t.output);
+for (i in streams) {%]
 from crossflow.[%=package%].[%=i.name.toSnakeCaseLower()%] import [%=i.name%]
 [%}%]
 
@@ -26,90 +37,93 @@ class [%=t.name%]Base(Task):
     def __init__(self):
         super().__init__()
                 
-        # Streams
+        # Streams        
         [%for (s in t.output) { %]
-        self.[%=s.name.ftlc()%] = None
-        self._has_sent_to_[%=s.name.toSnakeCaseLower()%] = False
-        
+        self._[%=s.name.toSnakeCaseLower()%]: [%=s.name%] = None
         [%}%]
+
 
     @property
     def name(self) -> str:
         return self.__class__.task_enum.value
 
+    [%if (t.isTypeOf(Source)) {%]
+    def _pre_send(self, job: Job) -> Job:
+        job = super()._pre_send(job)
+        job.transactional = False
+        return job
+        
+    [%}
+    
+    // Handle Output Streams
+    for (s in t.output) { %]
     @property
-    def total_outputs(self) -> int:
-        return sum([[%
-        for (s in t.output) {
-            out.print("self._has_sent_to_" + s.name.toSnakeCaseLower());
-            if (hasMore) {
-                out.print(", ");
-            }
-        }%]])
+    def [%=s.name.toSnakeCaseLower()%](self) -> [%=s.name%]:
+        return self._[%=s.name.toSnakeCaseLower()%]
     
-    [%for (o in t.output) { %]
-    def set[%=o.name%](self, [%=o.name.ftlc()%]):
-        self.[%=o.name.ftlc()%] = [%=o.name.ftlc()%]
+    @[%=s.name.toSnakeCaseLower()%].setter
+    def [%=s.name.toSnakeCaseLower()%](self, stream: [%=s.name%]):
+        self._[%=s.name.toSnakeCaseLower()%] = stream
+        self._sent["[%=s.name.toSnakeCaseLower()%]"] = False
+
+    def send_to_[%=s.name.toSnakeCaseLower()%](self, job: [%=s.type.name%]):
+        self._pre_send(job)
+        self.[%=s.name.toSnakeCaseLower()%].send(job, self.name)
+        self._sent["[%=s.name.toSnakeCaseLower()%]"] = True
     
-    def get[%=o.name%](self):
-        return self.[%=o.name.ftlc()%]
-    
-    def sendTo[%=o.name%](self, [%=o.type.name.ftlc()%]):
-        [%=o.type.name.ftlc()%]._current_root_ids = self._current_root_ids
-        [%=o.type.name.ftlc()%].cacheable = self.cacheable
-        [%if(t.isTypeOf(Source)){%]
-        [%=o.type.name.ftlc()%].transactional = False
-        [%}%]
-        self.get[%=o.name%]().send([%=o.type.name.ftlc()%][%if(not o.inputOf.isEmpty()){%], self.__class__.__name__[%}%])
-    
+    def _send_confirmation_to_[%=s.name.toSnakeCaseLower()%](self):
+        if self._sent.get("[%=s.name.toSnakeCaseLower()%]", False):
+            conf = [%=s.type.name%]()
+            conf.correlation_id = self.active_job.job_id
+            conf.is_transaction_success_message = True
+            conf.total_outputs = self.total_outputs
+            self.[%=s.name.toSnakeCaseLower()%].send(conf, self.name)
+        
     [%}%]
     [%for (s in t.input) { %]
-    def consume[%=s.name%]WithNotifications(self, [%=s.type.name.ftlc()%]: [%=s.type.name%]):
-        [%for (o in t.output) {%]
-        self._has_sent_to_[%=o.name.toSnakeCaseLower()%] = False
-        [%}%]
+    def consume_[%=s.name.toSnakeCaseLower()%]_with_notifications(self, input_job: [%=s.type.name%]):
+        print(f"Received {input_job}")
+        
+        
         
         try:
-            self._active_job = [%=s.type.name.ftlc()%]
-            self._current_root_ids = [%=s.type.name.ftlc()%].root_ids if [%=s.type.name.ftlc()%].root_ids else [%=s.type.name.ftlc()%].job_id
-            self.workflow.set_task_in_progress(self, [%=s.type.name.ftlc()%].job_id)
-            def consume():
-            [%if (t.isSingleOut()) {%]
-                result = self.consume[%=s.name%]([%=s.type.name.ftlc()%])
+            self.active_job = input_job
+            
+            def delegate():
+                self.workflow.set_task_in_progress(self, input_job.job_id)
+                [%if (t.isSingleOut()) {%]
+                result = self.consume_[%=s.name.toSnakeCaseLower()%](self.active_job)
                 if result is not None:
-                    if self.cacheable:
-                        result.correlation_id = [%=s.type.name.ftlc()%].job_id
                     result.transactional = False
-                    self.sendTo[%=t.output.first.name%](result)
-            [%}else {%]
-                self.consume[%=s.name%]([%=s.type.name.ftlc()%])
-                
-                [%for (o in t.output) {
-                    var confirmation = o.name.toSnakeCaseLower() + "_confirmation";%]
-                [%=confirmation%] = [%=t.output.first.type.name%]()
-                [%=confirmation%].correlation_id = [%=s.type.name.ftlc()%].job_id
-                [%=confirmation%].is_transaction_success_message = True
-                [%=confirmation%].total_outputs = self.total_outputs
-                if self._has_sent_to_[%=o.name.toSnakeCaseLower()%]:
-                    self.sendTo[%=o.name%]([%=confirmation%])
-                    
-                [%}
-            }%]
-
-            with ThreadPoolExecutor(max_workers=1) as executor:
-                self._active_future = executor.submit(consume)
-                
-            timeout = [%=s.type.name.ftlc()%].timeout if int([%=s.type.name.ftlc()%].timeout) > 0 else self._timeout
-            self._active_future.result(timeout if timeout > 0 else None)
+                    self.send_to_[%=t.output.first.name.toSnakeCaseLower()%](result)
+                [%}else {%]
+                self.consume_[%=s.name.toSnakeCaseLower()%](self.active_job)
+                    [%for (o in t.output) {%]
+                self._send_confirmation_to_[%=o.name.toSnakeCaseLower()%]()
+                    [%}
+                }%]
+            
+            
+            process = multiprocessing.Process(target=delegate)
+            process.start()
+            
+            timeout = self.active_job.timeout if self.active_job.timeout > 0 else self._timeout
+            if timeout > 0:
+                process.join(timeout)
+                if process.is_alive():
+                    process.terminate()
+                    raise TimeoutError
+                else:
+                    process.join()
 
         # Timeout reached
         except TimeoutError as ex:
             try:
                 self.workflow.report_internal_exception(ex)
-                send = self.on_consume_[%=s.name.toSnakeCaseLower()%]_timeout([%=s.type.name.ftlc()%])
+                send = self.on_consume_[%=s.name.toSnakeCaseLower()%]_timeout(self.active_job)
                 if send:
-                    [%=s.type.name.ftlc()%].failures = [%=s.type.name.ftlc()%].failures + 1
-                    self.workflow.failed_jobs_topic.send(FailedJob.from_exception([%=s.type.name.ftlc()%], ex, self))
+                    self.active_job.failures += 1
+                    self.workflow.failed_jobs_topic.send(FailedJob.from_exception(self.active_job, ex, self))
             except:
                 self.workflow.report_internal_exception(ex)
 
@@ -117,7 +131,7 @@ class [%=t.name%]Base(Task):
         except Exception as ex:
             try:
                 self.workflow.report_internal_exception(ex)
-                self.workflow.failed_jobs_topic.send(FailedJob.from_exception([%=s.type.name.ftlc()%], ex, self))
+                self.workflow.failed_jobs_topic.send(FailedJob.from_exception(self.active_job, ex, self))
             except:
                 self.workflow.report_internal_exception(ex)
 
@@ -125,17 +139,21 @@ class [%=t.name%]Base(Task):
         finally:
             try:
                 self.workflow.set_task_waiting(self)
-                self._active_job = None
-                self._current_root_ids = None
-                self._active_future = None
+                self.active_job = None
+                self.active_future = None
+                self._sent.update((k, False) for k in self._sent)                
             except Exception as ex:
                 self.workflow.local_logger.exception("")
                 self.workflow.report_internal_exception(ex)
 
-    def consume[%=s.name%](self, [%=s.type.name.ftlc()%]):
+    @abstractmethod
+    def consume_[%=s.name.toSnakeCaseLower()%](self, input_job: [%=s.type.name%]):
         pass
     
-    def on_consume_[%=s.name.toSnakeCaseLower()%]_timeout(self, [%=s.type.name.toSnakeCaseLower()%]):
+    def on_consume_[%=s.name.toSnakeCaseLower()%]_timeout(self, input_job: [%=s.type.name%]):
+        return True
+        
+    def on_consume_[%=s.name.toSnakeCaseLower()%]_cancelled(self, input_job: [%=s.type.name%]):
         return True
     [%}%]
     

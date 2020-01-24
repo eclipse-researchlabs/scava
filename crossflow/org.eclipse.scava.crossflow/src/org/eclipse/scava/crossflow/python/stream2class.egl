@@ -17,11 +17,11 @@ class [%=s.name%](JobStream):
             f"[%=s.name%]Pre.[%=t.name%].{self.workflow.instance}",
             False
         )
-        self._destination['[%=t.name%]'] = QueueInfo(
+        self._destination["[%=t.name%]"] = QueueInfo(
             f"[%=s.name%]Destination.[%=t.name%].{self.workflow.instance}",
             False
         )
-        self._post['[%=t.name%]'] = QueueInfo(
+        self._post["[%=t.name%]"] = QueueInfo(
             f"[%=s.name%]Post.[%=t.name%].{self.workflow.instance}",
             False,
             0 if enable_prefetch else 1
@@ -36,7 +36,7 @@ class [%=s.name%](JobStream):
             def handler(message, ack_func=None):        
                 try:
                     obj = self.workflow.serializer.deserialize(message)
-                    consumer.consume[%=s.name%]WithNotifications(obj)
+                    consumer.consume_[%=s.name.toSnakeCaseLower()%]_with_notifications(obj)
                     if ack_func is not None:
                         ack_func()
                 except Exception as ex:

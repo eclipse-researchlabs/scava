@@ -12,7 +12,7 @@
 			<datafield name="seconds" type="int"/>
 		</type>
 		
-		<type name="Result">
+		<type name="Result" extending="SleepTime">
 			<datafield name="completed" type="boolean"/>
 		</type>
 		
