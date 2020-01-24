@@ -4,9 +4,6 @@ import logging
 import multiprocessing
 import time
 from abc import abstractmethod
-from concurrent.futures import Future
-from concurrent.futures.process import ProcessPoolExecutor
-from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Dict
 
 from crossflow.runtime import FailedJob, Task
@@ -84,11 +81,10 @@ class [%=t.name%]Base(Task):
     def consume_[%=s.name.toSnakeCaseLower()%]_with_notifications(self, input_job: [%=s.type.name%]):
         print(f"Received {input_job}")
         
-        
-        
         try:
             self.active_job = input_job
             
+            # Delegate function to perform actual processing and confirmation messaging
             def delegate():
                 self.workflow.set_task_in_progress(self, input_job.job_id)
                 [%if (t.isSingleOut()) {%]
@@ -103,18 +99,35 @@ class [%=t.name%]Base(Task):
                     [%}
                 }%]
             
-            
+            # Start execution in a separate process
             process = multiprocessing.Process(target=delegate)
             process.start()
             
-            timeout = self.active_job.timeout if self.active_job.timeout > 0 else self._timeout
-            if timeout > 0:
-                process.join(timeout)
-                if process.is_alive():
+            # Calculate the timeout searching in order of input_job, deafult set in task, and finally setting to no timeout
+            timeout = None
+            time_left = 0
+            
+            if self.active_job.timeout > 0:
+                timeout = self.active_job.timeout
+            elif self.timeout > 0:
+                timeout = self.timeout
+            else:
+                timeout = None             
+                
+            # Loop
+            while process.exitcode is None:
+                # Check if a cancel signal was received for the current job
+                if self._cancel_pending:
                     process.terminate()
-                    raise TimeoutError
-                else:
-                    process.join()
+                    raise Exception(f"{self.active_job.job_id} cancelled")
+                
+                # Check timeout has not been reached
+                if timeout is not None and time_left < 0:
+                    process.terminate()
+                    raise TimeoutError(f"{self.active_job.job_id} timed out after {timeout}")
+                
+                time.sleep(1)
+                time_left -= 1
 
         # Timeout reached
         except TimeoutError as ex:
@@ -131,6 +144,7 @@ class [%=t.name%]Base(Task):
         except Exception as ex:
             try:
                 self.workflow.report_internal_exception(ex)
+                self.active_job.failures += 1
                 self.workflow.failed_jobs_topic.send(FailedJob.from_exception(self.active_job, ex, self))
             except:
                 self.workflow.report_internal_exception(ex)
@@ -140,7 +154,6 @@ class [%=t.name%]Base(Task):
             try:
                 self.workflow.set_task_waiting(self)
                 self.active_job = None
-                self.active_future = None
                 self._sent.update((k, False) for k in self._sent)                
             except Exception as ex:
                 self.workflow.local_logger.exception("")

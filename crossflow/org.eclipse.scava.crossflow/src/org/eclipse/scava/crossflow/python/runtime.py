@@ -555,9 +555,7 @@ class Task(ABC):
         self._subscription_id = uuid.uuid4().int
         self._sent: Dict[str, bool] = {}
         self._active_job: Job = None
-        self._active_future: Future = None
-        import multiprocessing
-        self._active_process: multiprocessing.Process = None
+        self._cancel_pending = False
 
     @property
     def task_id(self) -> str:
@@ -632,15 +630,18 @@ class Task(ABC):
 
     def task_unblocked(self):
         self._workflow.set_task_unblocked(self)
-
+        
     def cancel_job(self, payload: str) -> bool:
-        if self.active_job is not None and self.active_job.job_id == payload:
-            return self._active_future.cancel()
-        return False
+        """
+        Signals this task to cancel the current executing Job if True is returned
+        
+        The mechanism of cancellation differs significantly from the Java implementation.
+        """
+        return self.active_job is not None and self.active_job.job_id == payload
 
     def close(self):
         """Optional cleanup method to execute on close"""
-        pass        
+        pass
     
     def _pre_send(self, job: Job) -> Job:
         """
@@ -1463,8 +1464,8 @@ class Workflow(ABC):
                 self.local_logger.exception("Failed to handle TERMINATION signal")
 
         if signal.signal == ControlSignals.CANCEL_JOB:
-            self._cancel_local_jobs(signal.senderId)
             self.local_logger.info(f"Cancel job called for {signal.senderId}")
+            self._cancel_local_jobs(signal.senderId)
 
     def cancel_termination(self):
         # TODO: is this needed? Should the master not control termination?
@@ -1560,7 +1561,8 @@ class Workflow(ABC):
     def _cancel_local_jobs(self, payload: str) -> bool:
         ret = False
         for t in self._tasks:
-            ret = t.cancel_job(payload) or ret
+            t._cancel_pending = t.cancel_job(payload)
+            ret = t._cancel_pending or ret
         return ret
 
 
