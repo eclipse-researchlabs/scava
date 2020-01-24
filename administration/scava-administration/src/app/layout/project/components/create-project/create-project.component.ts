@@ -49,7 +49,7 @@ export class CreateProjectComponent implements OnInit {
     return ['', Validators.required];
   }
 
-  addInformationSource(source: string, type: string, loginMode?: string) {
+  addInformationSource(source: string, type: string) {
     const formArray = <FormArray>this.form.get(source);
     switch (source) {
       case 'vcs':
@@ -93,7 +93,7 @@ export class CreateProjectComponent implements OnInit {
 
   }
 
-  createCommunicationChannels(type: string, loginMode?: string) {
+  createCommunicationChannels(type: string) {
     switch (type) {
       case 'nntp':
         return this.formBuilder.group({
@@ -242,7 +242,6 @@ export class CreateProjectComponent implements OnInit {
     this.project.homePage = this.saveControlProject('homePage');
     this.project.vcsRepositories = this.saveInformationSources('vcs');
     this.project.bts = this.saveInformationSources('bts');
-    debugger
     this.project.communication_channels = this.saveInformationSources('communication_channels');
     this.createProjectService.createProject(this.project).subscribe(resp => {
       let project: IProject = resp as IProject;
