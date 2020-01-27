@@ -103,13 +103,13 @@ class [%=t.name%]Base(Task):
             process = multiprocessing.Process(target=delegate)
             process.start()
             
-            # Calculate the timeout searching in order of input_job, deafult set in task, and finally setting to no timeout            
+            # Calculate the timeout searching in order of input_job, default set in task, and finally setting to no timeout            
             if self.active_job.timeout > 0:
                 timeout = self.active_job.timeout
             elif self.timeout > 0:
                 timeout = self.timeout
             else:
-                timeout = None             
+                timeout = 0             
             
             # Loop
             time_left = timeout
@@ -120,7 +120,7 @@ class [%=t.name%]Base(Task):
                     raise Exception(f"{self.active_job.job_id} cancelled")
                 
                 # Check timeout has not been reached
-                if timeout is not None and time_left <= 0:
+                if timeout > 0 and time_left <= 0:
                     process.terminate()
                     raise TimeoutError(f"{self.active_job.job_id} timed out after {timeout}")
                 
@@ -167,9 +167,10 @@ class [%=t.name%]Base(Task):
         
     def on_consume_[%=s.name.toSnakeCaseLower()%]_cancelled(self, input_job: [%=s.type.name%]):
         return True
-    [%}%]
+        
+    [%}
     
-    [%if (t.isKindOf(Source)){%]
+    if (t.isKindOf(Source)){%]
     def produce(self):
         pass
         
