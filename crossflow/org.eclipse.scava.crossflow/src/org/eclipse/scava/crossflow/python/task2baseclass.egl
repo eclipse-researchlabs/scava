@@ -103,18 +103,16 @@ class [%=t.name%]Base(Task):
             process = multiprocessing.Process(target=delegate)
             process.start()
             
-            # Calculate the timeout searching in order of input_job, deafult set in task, and finally setting to no timeout
-            timeout = None
-            time_left = 0
-            
+            # Calculate the timeout searching in order of input_job, deafult set in task, and finally setting to no timeout            
             if self.active_job.timeout > 0:
                 timeout = self.active_job.timeout
             elif self.timeout > 0:
                 timeout = self.timeout
             else:
                 timeout = None             
-                
+            
             # Loop
+            time_left = timeout
             while process.exitcode is None:
                 # Check if a cancel signal was received for the current job
                 if self._cancel_pending:
@@ -122,7 +120,7 @@ class [%=t.name%]Base(Task):
                     raise Exception(f"{self.active_job.job_id} cancelled")
                 
                 # Check timeout has not been reached
-                if timeout is not None and time_left < 0:
+                if timeout is not None and time_left <= 0:
                     process.terminate()
                     raise TimeoutError(f"{self.active_job.job_id} timed out after {timeout}")
                 
@@ -154,6 +152,7 @@ class [%=t.name%]Base(Task):
             try:
                 self.workflow.set_task_waiting(self)
                 self.active_job = None
+                self._cancel_pending = False
                 self._sent.update((k, False) for k in self._sent)                
             except Exception as ex:
                 self.workflow.local_logger.exception("")
