@@ -13,7 +13,7 @@ Export-Package: org.apache.http.impl.nio.client,
  org.apache.http.nio.conn.scheme,
  org.apache.http.nio.conn.ssl
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.apache.httpcomponents.httpcorenio,
+Require-Bundle: org.apache.httpcomponents.httpcore.nio;bundle-version="4.1.0",
  org.apache.httpcomponents.httpcore,
  org.apache.commons.logging,
  org.apache.httpcomponents.httpclient
