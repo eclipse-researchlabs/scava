@@ -57,11 +57,6 @@
 <unit id="org.eclipse.mylyn.github.feature.feature.group" version="5.3.0.201903130848-r"/>
 <repository location="http://download.eclipse.org/egit/github/updates-5.3/"/>
 </location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-<repository location="http://eclipse.svnkit.com/1.8.x/"/>
-<unit id="net.java.dev.jna.feature.group" version="4.1.0.v06022015_1911"/>
-<unit id="org.tmatesoft.svnkit.feature.group" version="1.8.15.r10636"/>
-</location>
 </locations>
 <environment>
 <arch>x86_64</arch>
