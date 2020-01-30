@@ -74,7 +74,10 @@ public class ApiMigrationRecommendationController
 		Display.getDefault().asyncExec(() -> {
 			detectionRequestController.getHandler().cancel();
 			snippetsRequestController.getHandler().cancel();
-			getView().showLoadingFailed(ErrorHandler.logAndGetMessage(exception));
+
+			if (!isDisposed()) {
+				getView().showLoadingFailed(ErrorHandler.logAndGetMessage(exception));
+			}
 		});
 	}
 

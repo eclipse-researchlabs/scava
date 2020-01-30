@@ -73,7 +73,9 @@ public class ApiDocumentationController extends ModelViewController<ApiDocumenta
 	}
 
 	private void onFail(ApiException e) {
-		webReferenceController.showError(ErrorHandler.logAndGetMessage(e));
+		if (!isDisposed()) {
+			webReferenceController.showError(ErrorHandler.logAndGetMessage(e));
+		}
 	}
 
 }

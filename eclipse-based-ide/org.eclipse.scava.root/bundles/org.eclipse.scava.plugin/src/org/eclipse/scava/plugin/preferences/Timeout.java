@@ -34,14 +34,14 @@ public class Timeout extends FieldEditorPreferencePage implements IWorkbenchPref
 	protected void createFieldEditors() {
 		addField(new IntegerFieldEditor(Preferences.TIMEOUT_PROJECTSEARCH, "Timeout of Project Search",
 				getFieldEditorParent()));
-		addField(new IntegerFieldEditor(Preferences.TIMEOUT_LIBRARYSEARCH, "Timeout of Library Update search",
+		addField(new IntegerFieldEditor(Preferences.TIMEOUT_LIBRARYSEARCH, "Timeout of Library Suggestion search",
 				getFieldEditorParent()));
 		addField(new IntegerFieldEditor(Preferences.TIMEOUT_CODERECOMMENDATION, "Timeout of Code Recommendation",
 				getFieldEditorParent()));
 		addField(new IntegerFieldEditor(Preferences.TIMEOUT_APIDOCUMENTATION,
 				"Timeout of API Documentation and Q&&A posts", getFieldEditorParent()));
 		addField(new IntegerFieldEditor(Preferences.TIMEOUT_APIMIGRATION_LIBRARY_SEARCH,
-				"Timeout of API Migration Library search", getFieldEditorParent()));
+				"Timeout of Library Update search", getFieldEditorParent()));
 		addField(new IntegerFieldEditor(Preferences.TIMEOUT_APIMIGRATION_M3,
 				"Timeout of API Migration M3 model request", getFieldEditorParent()));
 		addField(new IntegerFieldEditor(Preferences.TIMEOUT_APIMIGRATION_RECOMMENDATIONS,
@@ -51,6 +51,8 @@ public class Timeout extends FieldEditorPreferencePage implements IWorkbenchPref
 		addField(new IntegerFieldEditor(Preferences.TIMEOUT_FOCUS_CODESNIPPET, "Timeout of FOCUS Code snippet",
 				getFieldEditorParent()));
 		addField(new IntegerFieldEditor(Preferences.TIMEOUT_UPLOAD_METRICS, "Timeout of Upload Metrics",
+				getFieldEditorParent()));
+		addField(new IntegerFieldEditor(Preferences.TIMEOUT_CONNECTION_TEST, "Timeout of Connection Test",
 				getFieldEditorParent()));
 	}
 

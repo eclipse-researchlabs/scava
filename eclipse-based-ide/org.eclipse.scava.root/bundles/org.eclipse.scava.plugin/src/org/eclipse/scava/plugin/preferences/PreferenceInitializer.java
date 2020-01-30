@@ -39,12 +39,13 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		preferences.setDefault(Preferences.TIMEOUT_LIBRARYSEARCH, 60 * 1000);
 		preferences.setDefault(Preferences.TIMEOUT_CODERECOMMENDATION, 60 * 1000);
 		preferences.setDefault(Preferences.TIMEOUT_APIDOCUMENTATION, 60 * 1000);
-		preferences.setDefault(Preferences.TIMEOUT_APIMIGRATION_LIBRARY_SEARCH, 15 * 60 * 1000);
+		preferences.setDefault(Preferences.TIMEOUT_APIMIGRATION_LIBRARY_SEARCH, 2 * 60 * 1000);
 		preferences.setDefault(Preferences.TIMEOUT_APIMIGRATION_M3, 15 * 60 * 1000);
 		preferences.setDefault(Preferences.TIMEOUT_APIMIGRATION_RECOMMENDATIONS, 15 * 60 * 1000);
 		preferences.setDefault(Preferences.TIMEOUT_FOCUS_APICALL, 60 * 1000);
 		preferences.setDefault(Preferences.TIMEOUT_FOCUS_CODESNIPPET, 60 * 1000);
 		preferences.setDefault(Preferences.TIMEOUT_UPLOAD_METRICS, 60 * 1000);
+		preferences.setDefault(Preferences.TIMEOUT_CONNECTION_TEST, 10 * 1000);
 
 		if (existDirectory(ResourcesPlugin.getWorkspace().getRoot().getLocation().toOSString() + File.separator
 				+ "OrientDataBase")) {

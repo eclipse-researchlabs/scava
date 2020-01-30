@@ -34,4 +34,5 @@ public class Preferences {
 	public static final String TIMEOUT_FOCUS_CODESNIPPET = "TIMEOUT_FOCUSCODESNIPPET";
 	public static final String TIMEOUT_UPLOAD_METRICS = "TIMEOUT_UPLOAD_METRICS";
 	public static final String TIMEOUT_FEEDBACK = "TIMEOUT_FEEDBACK";
+	public static final String TIMEOUT_CONNECTION_TEST = "TIMEOUT_CONNECTION_TEST";
 }

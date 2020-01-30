@@ -12,12 +12,14 @@ package org.eclipse.scava.plugin.coderecommendation;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.scava.plugin.async.api.ApiAsyncRequestController;
 import org.eclipse.scava.plugin.coderecommendation.preview.CodeRecommendationPreviewController;
 import org.eclipse.scava.plugin.coderecommendation.preview.CodeRecommendationPreviewModel;
 import org.eclipse.scava.plugin.coderecommendation.preview.CodeRecommendationPreviewView;
@@ -46,14 +48,20 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 import io.swagger.client.ApiException;
 import io.swagger.client.model.ApiCallResult;
+import io.swagger.client.model.Query;
+import io.swagger.client.model.Recommendation;
+import io.swagger.client.model.RecommendationItem;
 
 public class CodeRecommendationController extends ModelViewController<CodeRecommendationModel, CodeRecommendationView>
 		implements ICodeRecommendationViewEventListener {
 
+	private final ApiAsyncRequestController<Recommendation> recommendationRequestController;
 	private ActiveEditorOnPageListener activeEditorOnPageListener;
 
 	public CodeRecommendationController(Controller parent, CodeRecommendationModel model, CodeRecommendationView view) {
 		super(parent, model, view);
+		recommendationRequestController = new ApiAsyncRequestController<>(this,
+				b -> b.onFail(this::onFail).executeWith(Display.getDefault()::asyncExec));
 	}
 
 	@Override
@@ -79,31 +87,38 @@ public class CodeRecommendationController extends ModelViewController<CodeRecomm
 	}
 
 	public void request(IFile file, int startLine, int endLine, String sourceCode) {
-		try {
-			Map<ApiCallResult, FeedbackResource> apiCallResults = getModel().getApiCallResults(sourceCode);
+		recommendationRequestController.execute(getModel().getApiCallResults(sourceCode).onSuccessWithQuery(
+				(recommendation, query) -> onSuccess(recommendation, query, file, startLine, endLine, sourceCode)));
+	}
 
-			if (apiCallResults.isEmpty()) {
-				MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-						"No code recommendations were found for the selected code chunk");
-			} else {
-				CodeRecommendationTarget target = new CodeRecommendationTarget(file);
-				CodeRecommendationRequest request = new CodeRecommendationRequest(new Date(), startLine, endLine,
-						sourceCode, target);
-				target.getCodeRecommendationsRequests().add(request);
+	private void onSuccess(Recommendation recommendation, Query query, IFile file, int startLine, int endLine,
+			String sourceCode) {
 
-				apiCallResults.forEach((apiCallResult, feedbackResource) -> {
-					CodeRecommendation codeRecommendation = new CodeRecommendation(request, apiCallResult,
-							feedbackResource);
-					request.getCodeRecommendations().add(codeRecommendation);
-				});
+		Map<ApiCallResult, FeedbackResource> apiCallResults = recommendation.getRecommendationItems().stream()
+				.collect(Collectors.toMap(RecommendationItem::getApiCallRecommendation,
+						item -> new FeedbackResource(query, item)));
 
-				routeEventToSubControllers(new AddCodeRecommendationsRequestEvent(this, target));
-			}
+		if (apiCallResults.isEmpty()) {
+			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+					"No code recommendations were found for the selected code chunk");
+		} else {
+			CodeRecommendationTarget target = new CodeRecommendationTarget(file);
+			CodeRecommendationRequest request = new CodeRecommendationRequest(new Date(), startLine, endLine,
+					sourceCode, target);
+			target.getCodeRecommendationsRequests().add(request);
 
-		} catch (ApiException e) {
-			e.printStackTrace();
-			ErrorHandler.logAndShowErrorMessage(Display.getDefault().getActiveShell(), e);
+			apiCallResults.forEach((apiCallResult, feedbackResource) -> {
+				CodeRecommendation codeRecommendation = new CodeRecommendation(request, apiCallResult,
+						feedbackResource);
+				request.getCodeRecommendations().add(codeRecommendation);
+			});
+
+			routeEventToSubControllers(new AddCodeRecommendationsRequestEvent(this, target));
 		}
+	}
+
+	private void onFail(ApiException e) {
+		ErrorHandler.logAndShowErrorMessage(Display.getDefault().getActiveShell(), e);
 	}
 
 	@Override

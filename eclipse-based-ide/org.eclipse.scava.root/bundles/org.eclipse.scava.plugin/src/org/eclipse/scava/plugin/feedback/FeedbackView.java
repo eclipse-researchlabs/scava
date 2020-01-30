@@ -102,6 +102,7 @@ public class FeedbackView extends TitleAreaDialogView<IFeedbackViewEventListener
 		rating.setLayoutData(gd_rating);
 
 		rating.setNrOfStars(5);
+		rating.setSelection(3);
 		rating.setImage(
 				ResourceManager.getPluginImage("org.eclipse.scava.plugin", "icons/control/ratingstar_32x32.png"));
 		rating.setVertical(false);

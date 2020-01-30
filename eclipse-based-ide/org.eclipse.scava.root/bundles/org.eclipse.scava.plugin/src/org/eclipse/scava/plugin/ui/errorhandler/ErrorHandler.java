@@ -1,5 +1,6 @@
 package org.eclipse.scava.plugin.ui.errorhandler;
 
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
@@ -44,7 +45,7 @@ public class ErrorHandler {
 	public static String logAndGetMessage(ApiException e) {
 
 		int errorCode = e.getCode();
-			
+
 		String responseBody = e.getResponseBody();
 		Map<String, List<String>> responseHeaders = e.getResponseHeaders();
 		StringBuilder userMessage = new StringBuilder();
@@ -59,12 +60,13 @@ public class ErrorHandler {
 					userMessage.append('\n');
 				}
 				if (cause instanceof SocketTimeoutException) {
-					userMessage.append("Connection timed out.\nProbably the host is unavailable or you have connection issues.\n");
+					userMessage.append(
+							"Connection timed out.\nProbably the host is unavailable or you have connection issues.\n");
 				}
-				if( cause instanceof ConnectException ) {
-					userMessage.append(cause.getMessage()+"\n");
+				if (cause instanceof ConnectException || cause instanceof IOException) {
+					userMessage.append(cause.getMessage() + "\n");
 				}
-				userMessage.append("Please, check your settings in the preferences.\n");
+				userMessage.append("Check your settings in the preferences.\n");
 				break;
 			}
 		case 400:
@@ -145,7 +147,7 @@ public class ErrorHandler {
 			message.append("You have reached the limit of daily requests of the Stackexchange API.");
 			message.append("\n");
 		}
-		
+
 		log(Status.ERROR, message.toString(), e);
 
 		return message.toString();
@@ -157,25 +159,26 @@ public class ErrorHandler {
 		message.append(e.getMessage());
 		message.append("\n");
 		message.append("Please check https://www.rascal-mpl.org/help/troubleshooting.html\n");
-		
+
 		log(Status.ERROR, message.toString(), e);
-		
+
 		StringBuilder userMessage = new StringBuilder();
 		userMessage.append(e.getMessage());
 		userMessage.append("\n");
 		userMessage.append("For more details see the log file.");
-		
+
 		return userMessage.toString();
 	}
+
 	public static void logAndShowErrorMessage(Shell shell, Throwable e) {
 		logAndShowErrorMessage(shell, "", e);
 	}
-	
+
 	public static void logAndShowErrorMessage(Shell shell, String message, Throwable e) {
 		String userMessage = logAndGetMessage(e);
-		if( message.isEmpty() ) {
+		if (message.isEmpty()) {
 			MessageDialog.openError(shell, "Error", userMessage);
-		}else {
+		} else {
 			MessageDialog.openError(shell, "Error", message + "\n" + userMessage);
 		}
 	}

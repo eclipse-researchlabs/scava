@@ -18,6 +18,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class StarRating extends Composite {
 	private Image image;
@@ -90,6 +91,8 @@ public class StarRating extends Composite {
 				selected = hoverSelected;
 			}
 		});
+		
+		setCursor(SWTResourceManager.getCursor(SWT.CURSOR_HAND));
 	}
 
 	private void paintControl(Event event) {

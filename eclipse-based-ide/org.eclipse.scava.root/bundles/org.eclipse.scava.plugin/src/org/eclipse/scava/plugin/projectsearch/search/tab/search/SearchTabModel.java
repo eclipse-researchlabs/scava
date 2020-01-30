@@ -18,7 +18,6 @@ import org.eclipse.scava.plugin.mvc.model.Model;
 import io.swagger.client.ApiException;
 import io.swagger.client.model.Artifact;
 
-//TODO needs clarifications about the way the server sends the artifacts. Would be good for us if the results were wrapped in a Page<Artifact> thing
 public abstract class SearchTabModel extends Model {
 	protected final KnowledgeBaseAccess knowledgeBaseAccess;
 	protected int pageSize = 10;

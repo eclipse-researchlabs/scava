@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.scava.plugin.mvc.view.ViewPartView;
+import org.eclipse.scava.plugin.ui.loadingspinner.LoadingSpinner;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.layout.FillLayout;
@@ -33,6 +34,7 @@ public class FocusCodeSnippetRecommendationView extends ViewPartView<IFocusCodeS
 	private Composite resultsComposite;
 	private Composite errorMessageComposite;
 	private Label lblErrorMessage;
+	private LoadingSpinner loadingSpinner;
 	private Composite loadingComposite;
 	private Label lblLoading;
 	private FocusCodeSnippetViewContentComposite focusCodeSnippetContent;
@@ -58,7 +60,10 @@ public class FocusCodeSnippetRecommendationView extends ViewPartView<IFocusCodeS
 		loadingComposite = new Composite(getComposite(), SWT.NONE);
 		loadingComposite.setBackgroundMode(SWT.INHERIT_FORCE);
 		loadingComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		loadingComposite.setLayout(new GridLayout(1, false));
+		loadingComposite.setLayout(new GridLayout(2, false));
+
+		loadingSpinner = new LoadingSpinner(loadingComposite, SWT.NONE);
+		loadingSpinner.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 
 		lblLoading = new Label(loadingComposite, SWT.NONE);
 		lblLoading.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -124,6 +129,8 @@ public class FocusCodeSnippetRecommendationView extends ViewPartView<IFocusCodeS
 		StackLayout layout = (StackLayout) getComposite().getLayout();
 		layout.topControl = errorMessageComposite;
 
+		loadingSpinner.stopAnimation();
+
 		lblErrorMessage.setText(message);
 		getComposite().requestLayout();
 
@@ -136,6 +143,8 @@ public class FocusCodeSnippetRecommendationView extends ViewPartView<IFocusCodeS
 		StackLayout layout = (StackLayout) getComposite().getLayout();
 		layout.topControl = loadingComposite;
 
+		loadingSpinner.startAnimation();
+
 		Display.getDefault().asyncExec(() -> {
 			getComposite().requestLayout();
 		});
@@ -144,6 +153,8 @@ public class FocusCodeSnippetRecommendationView extends ViewPartView<IFocusCodeS
 	public void showCodeSnippets(List<String> snippets) {
 		StackLayout layout = (StackLayout) getComposite().getLayout();
 		layout.topControl = resultsComposite;
+
+		loadingSpinner.stopAnimation();
 
 		focusCodeSnippetContent.showCodeSnippetList(snippets);
 

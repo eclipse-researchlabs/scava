@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?NLS TYPE="org.eclipse.help.toc"?>
 
-<toc label="Sample Table of Contents" topic="html/toc.html">
+<toc label="CROSSMINER Table of Contents" topic="html/toc.html">
  <topic href="html/SettingsAndCustomization/settingsAndCustomization.html" label="Settings and Customization">
     <topic href="html/SettingsAndCustomization/integrationRelatedSettings.html" label="Integration Related Settings">
     </topic>
@@ -41,5 +41,7 @@
     </topic>
     <topic href="html/UserActivityMonitoring/retrievingProcessMetricsViaWebbasedDashboard.html" label="Retrieving Process Metrics via crossminer Webbased Dashboard">
     </topic>
+ </topic>
+ <topic href="html/ProvideFeedback/provideFeedback.html" label="Provide Feedback">
  </topic>
 </toc>

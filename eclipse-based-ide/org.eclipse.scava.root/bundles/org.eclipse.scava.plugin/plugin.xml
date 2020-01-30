@@ -579,7 +579,7 @@
      <view
            allowMultiple="false"
            class="org.eclipse.scava.plugin.libraryversions.apimigration.ApiMigrationCenterView"
-           icon="icons/bulb.png"
+           icon="icons/features/new_library_available_16x16.png"
            id="org.eclipse.scava.plugin.apimigration.ApiMigration"
            name="API Migration"
            restorable="false">

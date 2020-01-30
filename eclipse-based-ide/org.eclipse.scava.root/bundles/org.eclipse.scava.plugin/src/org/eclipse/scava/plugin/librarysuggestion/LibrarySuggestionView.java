@@ -14,6 +14,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.scava.plugin.librarysuggestion.library.LibraryView;
 import org.eclipse.scava.plugin.mvc.view.TitleAreaDialogView;
+import org.eclipse.scava.plugin.ui.loadingspinner.LoadingSpinner;
 import org.eclipse.scava.plugin.ui.scrolledcomposite.ScrolledComposites;
 import org.eclipse.scava.plugin.ui.verticalList.VerticalList;
 import org.eclipse.swt.SWT;
@@ -52,6 +53,7 @@ public class LibrarySuggestionView extends TitleAreaDialogView<ILibrarySuggestio
 	private Label lblSuggestedLibraries;
 	private Label label_4;
 	private VerticalList suggestedVerticalList;
+	private LoadingSpinner loadingSpinner;
 	private Label lblLoadingResults;
 	private CLabel lblUseNone;
 	private CLabel lblUseAll;
@@ -270,11 +272,18 @@ public class LibrarySuggestionView extends TitleAreaDialogView<ILibrarySuggestio
 		lblNoLibrariesWere.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 		lblNoLibrariesWere.setText("No libraries were found");
 
-		lblLoadingResults = new Label(composite_1, SWT.NONE);
+		Composite loadingComposite = new Composite(composite_1, SWT.NONE);
+		loadingComposite.setLayout(new GridLayout(2, false));
+		loadingComposite.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 2, 1));
+		
+		loadingSpinner = new LoadingSpinner(loadingComposite, SWT.NONE);
+		loadingSpinner.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+		
+		lblLoadingResults = new Label(loadingComposite, SWT.NONE);
 		lblLoadingResults.setEnabled(false);
 		lblLoadingResults.setFont(SWTResourceManager.getFont("Segoe UI", 9, SWT.ITALIC));
 		lblLoadingResults.setAlignment(SWT.CENTER);
-		lblLoadingResults.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 2, 1));
+		lblLoadingResults.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 		lblLoadingResults.setText("Loading results...");
 
 		lblCouldNotLoad = new Label(composite_1, SWT.NONE);
@@ -301,7 +310,7 @@ public class LibrarySuggestionView extends TitleAreaDialogView<ILibrarySuggestio
 	public void init() {
 		super.init();
 
-		lblLoadingResults.setVisible(false);
+		showLoading(false);
 		lblCouldNotLoad.setVisible(false);
 		btnTryAgain.setVisible(false);
 	}
@@ -351,7 +360,7 @@ public class LibrarySuggestionView extends TitleAreaDialogView<ILibrarySuggestio
 	}
 
 	public void addSuggestedLibrary(LibraryView view) {
-		lblLoadingResults.setVisible(false);
+		showLoading(false);
 		lblCouldNotLoad.setVisible(false);
 		btnTryAgain.setVisible(false);
 
@@ -366,21 +375,21 @@ public class LibrarySuggestionView extends TitleAreaDialogView<ILibrarySuggestio
 	}
 
 	public void showLoadingResults() {
-		lblLoadingResults.setVisible(true);
+		showLoading(true);
 		lblCouldNotLoad.setVisible(false);
 		btnTryAgain.setVisible(false);
 		lblNoLibrariesWere.setVisible(false);
 	}
 
 	public void showTryAgain() {
-		lblLoadingResults.setVisible(false);
+		showLoading(false);
 		lblCouldNotLoad.setVisible(true);
 		btnTryAgain.setVisible(true);
 		lblNoLibrariesWere.setVisible(false);
 	}
 
 	public void showNoResults() {
-		lblLoadingResults.setVisible(false);
+		showLoading(false);
 		lblCouldNotLoad.setVisible(false);
 		btnTryAgain.setVisible(false);
 		lblNoLibrariesWere.setVisible(true);
@@ -391,6 +400,16 @@ public class LibrarySuggestionView extends TitleAreaDialogView<ILibrarySuggestio
 		if (MessageDialog.openConfirm(getShell(), "Confirmation",
 				"All custom informations from the project's pom.xml file will be erased.\nAre you sure you want to continue?")) {
 			eventManager.invoke(l -> l.onInstall());
+		}
+	}
+	
+	private void showLoading(boolean show) {
+		lblLoadingResults.setVisible(show);
+		loadingSpinner.setVisible(show);
+		if(show) {
+			loadingSpinner.startAnimation();
+		}else {
+			loadingSpinner.stopAnimation();
 		}
 	}
 

@@ -61,7 +61,9 @@ public class ApiMigrationApiDocumentationController
 	}
 
 	protected void onRecommendationFail(ApiException exception) {
-		getView().showLoadingFailed(ErrorHandler.logAndGetMessage(exception));
+		if (!isDisposed()) {
+			getView().showLoadingFailed(ErrorHandler.logAndGetMessage(exception));
+		}
 	}
 
 	@Override

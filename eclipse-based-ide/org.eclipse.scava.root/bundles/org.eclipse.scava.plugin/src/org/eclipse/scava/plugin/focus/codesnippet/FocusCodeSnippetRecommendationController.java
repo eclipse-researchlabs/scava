@@ -86,7 +86,9 @@ public class FocusCodeSnippetRecommendationController
 	}
 
 	private void onFail(ApiException e) {
-		getView().showErrorMessage(ErrorHandler.logAndGetMessage(e));
+		if (!isDisposed()) {
+			getView().showErrorMessage(ErrorHandler.logAndGetMessage(e));
+		}
 	}
 
 	@Override

@@ -24,6 +24,7 @@ import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.scava.plugin.mvc.view.ViewPartView;
+import org.eclipse.scava.plugin.ui.loadingspinner.LoadingSpinner;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.MouseAdapter;
@@ -47,6 +48,7 @@ public class FocusApiCallRecommendationView extends ViewPartView<IFocusApiCallRe
 	private Composite resultsComposite;
 	private Composite errorMessageComposite;
 	private Label lblErrorMessage;
+	private LoadingSpinner loadingSpinner;
 	private Composite loadingComposite;
 	private Label lblLoading;
 	private Composite composite;
@@ -80,7 +82,10 @@ public class FocusApiCallRecommendationView extends ViewPartView<IFocusApiCallRe
 		loadingComposite = new Composite(getComposite(), SWT.NONE);
 		loadingComposite.setBackgroundMode(SWT.INHERIT_FORCE);
 		loadingComposite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
-		loadingComposite.setLayout(new GridLayout(1, false));
+		loadingComposite.setLayout(new GridLayout(2, false));
+
+		loadingSpinner = new LoadingSpinner(loadingComposite, SWT.NONE);
+		loadingSpinner.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
 
 		lblLoading = new Label(loadingComposite, SWT.NONE);
 		lblLoading.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
@@ -279,6 +284,8 @@ public class FocusApiCallRecommendationView extends ViewPartView<IFocusApiCallRe
 	public void showErrorMessage(String message) {
 		StackLayout layout = (StackLayout) getComposite().getLayout();
 		layout.topControl = errorMessageComposite;
+		
+		loadingSpinner.stopAnimation();
 
 		lblErrorMessage.setText(message);
 		getComposite().requestLayout();
@@ -291,6 +298,8 @@ public class FocusApiCallRecommendationView extends ViewPartView<IFocusApiCallRe
 	public void showLoading() {
 		StackLayout layout = (StackLayout) getComposite().getLayout();
 		layout.topControl = loadingComposite;
+		
+		loadingSpinner.startAnimation();
 
 		Display.getDefault().asyncExec(() -> {
 			getComposite().requestLayout();
@@ -300,6 +309,8 @@ public class FocusApiCallRecommendationView extends ViewPartView<IFocusApiCallRe
 	public void showFunctionCallRecommendations(java.util.List<Entry<String, Float>> apiCalls) {
 		StackLayout layout = (StackLayout) getComposite().getLayout();
 		layout.topControl = resultsComposite;
+		
+		loadingSpinner.stopAnimation();
 
 		tableViewer.setInput(apiCalls.toArray());
 		tableViewer.refresh();

@@ -12,6 +12,7 @@ package org.eclipse.scava.plugin.libraryversions.apimigration.migration.result;
 
 import org.eclipse.scava.plugin.mvc.view.CompositeView;
 import org.eclipse.scava.plugin.mvc.view.IView;
+import org.eclipse.scava.plugin.ui.loadingspinner.LoadingSpinner;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -30,6 +31,7 @@ public class ApiMigrationResultView extends CompositeView<IApiMigrationResultVie
 	private Composite resultsComposite;
 	private Label lblPleaseTryAgain;
 	private Label lblFailMessage;
+	private LoadingSpinner loadingSpinner;
 	private Label lblLoading;
 	private Composite messageComposite;
 	private Label lblMessage;
@@ -47,8 +49,11 @@ public class ApiMigrationResultView extends CompositeView<IApiMigrationResultVie
 		setLayout(new StackLayout());
 
 		loadingComposite = new Composite(this, SWT.NONE);
-		loadingComposite.setLayout(new GridLayout(1, false));
+		loadingComposite.setLayout(new GridLayout(2, false));
 
+		loadingSpinner = new LoadingSpinner(loadingComposite, SWT.NONE);
+		loadingSpinner.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1));
+		
 		lblLoading = new Label(loadingComposite, SWT.NONE);
 		lblLoading.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
 		lblLoading.setText("Loading results...\nThis may take a while. Please be patient.");
@@ -96,6 +101,8 @@ public class ApiMigrationResultView extends CompositeView<IApiMigrationResultVie
 	public void showLoadingResults() {
 		StackLayout layout = (StackLayout) getComposite().getLayout();
 		layout.topControl = loadingComposite;
+		
+		loadingSpinner.startAnimation();
 
 		requestLayout();
 	}
@@ -104,6 +111,8 @@ public class ApiMigrationResultView extends CompositeView<IApiMigrationResultVie
 		lblFailMessage.setText(message);
 		StackLayout layout = (StackLayout) getComposite().getLayout();
 		layout.topControl = failedComposite;
+		
+		loadingSpinner.stopAnimation();
 
 		requestLayout();
 	}
@@ -115,6 +124,8 @@ public class ApiMigrationResultView extends CompositeView<IApiMigrationResultVie
 
 		StackLayout layout = (StackLayout) getComposite().getLayout();
 		layout.topControl = resultsComposite;
+		
+		loadingSpinner.stopAnimation();
 
 		requestLayout();
 	}
@@ -124,6 +135,8 @@ public class ApiMigrationResultView extends CompositeView<IApiMigrationResultVie
 		layout.topControl = messageComposite;
 
 		lblMessage.setText(message);
+		
+		loadingSpinner.stopAnimation();
 
 		requestLayout();
 	}

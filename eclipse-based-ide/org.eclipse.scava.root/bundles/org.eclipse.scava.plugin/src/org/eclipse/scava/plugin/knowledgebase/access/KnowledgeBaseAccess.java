@@ -24,7 +24,7 @@ import io.swagger.client.api.RecommenderRestControllerApi;
 public class KnowledgeBaseAccess {
 	private final ApiClient apiClient;
 
-	private final IPropertyChangeListener propertyChangeListener;
+	private IPropertyChangeListener propertyChangeListener;
 
 	public KnowledgeBaseAccess() {
 		apiClient = new ApiClient();
@@ -44,6 +44,11 @@ public class KnowledgeBaseAccess {
 
 		IPreferenceStore preferences = Activator.getDefault().getPreferenceStore();
 		preferences.addPropertyChangeListener(propertyChangeListener);
+	}
+
+	public KnowledgeBaseAccess(String address, int port) {
+		apiClient = new ApiClient();
+		apiClient.setBasePath(address + ":" + port);
 	}
 
 	private void configureBasePath(ApiClient apiClient) {

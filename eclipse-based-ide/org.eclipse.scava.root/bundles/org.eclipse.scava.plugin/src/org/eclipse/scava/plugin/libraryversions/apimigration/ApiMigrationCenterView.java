@@ -38,7 +38,7 @@ public class ApiMigrationCenterView extends ViewPartView<IApiMigrationCenterView
 
 	public ApiMigrationCenterView() {
 		setTitleImage(ResourceManager.getPluginImage("org.eclipse.scava.plugin",
-				"icons/features/crossminer_code_api_recommend_16x16.png"));
+				"icons/features/new_library_available_16x16.png"));
 	}
 
 	/**
