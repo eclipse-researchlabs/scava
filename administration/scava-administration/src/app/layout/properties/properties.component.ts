@@ -61,6 +61,7 @@ export class PropertiesComponent implements OnInit {
       this.propertiesService.createProperties(this.properties).subscribe(
         (resp) => {
           this.showNew = false;
+          this.loadAll();
         }, (error) => {
           this.onShowMessage(error);
         }
@@ -69,12 +70,12 @@ export class PropertiesComponent implements OnInit {
       this.propertiesService.updateProperties(this.properties).subscribe(
         (resp) => {
           this.showNew = false;
+          this.loadAll();
         }, (error) => {
           this.onShowMessage(error);
         }
       )
     }
-    this.loadAll();
   }
 
   onCancel() {
