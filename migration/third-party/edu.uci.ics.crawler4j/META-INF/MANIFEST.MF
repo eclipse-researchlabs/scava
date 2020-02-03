@@ -6,7 +6,7 @@ Bundle-Version: 4.4.0
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.apache.tika,
  org.apache.httpcomponents.httpclient,
- org.slf4j.api,
+ org.slf4j.api;bundle-version="1.7.2",
  com.sleepycat.je,
  com.google.guava-jre,
  ch.qos.logback.logback-classic,

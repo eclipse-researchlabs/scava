@@ -7,7 +7,7 @@ Require-Bundle: org.eclipse.scava.libsvm.dependencies,
  org.eclipse.equinox.registry,
  org.eclipse.scava.platform,
  org.apache.log4j,
- commons-io.commons-io
+ org.apache.commons.io;bundle-version="2.2.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.eclipse.scava.libsvm

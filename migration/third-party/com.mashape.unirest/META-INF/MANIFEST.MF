@@ -17,4 +17,4 @@ Require-Bundle: org.apache.httpcomponents.httpclient,
  org.apache.httpcomponents.httpmime,
  org.json,
  org.apache.httpcomponents.httpcore,
- org.apache.httpcomponents.httpcorenio
+ org.apache.httpcomponents.httpcore.nio;bundle-version="4.1.0"

@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<units size='1'>
+  <unit id='org.svnkit' version='1.0.0' singleton='false'>
+    <update id='org.svnkit' range='[0.0.0,1.0.0)' severity='0'/>
+    <properties size='4'>
+      <property name='org.eclipse.equinox.p2.name' value='Svnkit'/>
+      <property name='maven-groupId' value='org.eclipse.scava'/>
+      <property name='maven-artifactId' value='org.svnkit'/>
+      <property name='maven-version' value='1.0.0'/>
+    </properties>
+    <provides size='41'>
+      <provided namespace='org.eclipse.equinox.p2.iu' name='org.svnkit' version='1.0.0'/>
+      <provided namespace='osgi.bundle' name='org.svnkit' version='1.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.auth' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.db' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.delta' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.handlers' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.dav.http' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.fs' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.fs.repcache' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.fs.revprop' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.svn' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.svn.sasl' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.io.svn.ssh' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.util.jna' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc.admin' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc.patch' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc16' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc17' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc17.db' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc17.db.statement' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc2' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc2.admin' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc2.compat' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc2.ng' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc2.old' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.internal.wc2.remote' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.io' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.io.diff' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.replicator' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.wc' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.admin' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.wc.xml' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.wc2' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.wc2.admin' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.core.wc2.hooks' version='0.0.0'/>
+      <provided namespace='java.package' name='org.tmatesoft.svn.util' version='0.0.0'/>
+      <provided namespace='org.eclipse.equinox.p2.eclipse.type' name='bundle' version='1.0.0'/>
+    </provides>
+    <artifacts size='1'>
+      <artifact classifier='osgi.bundle' id='org.svnkit' version='1.0.0'/>
+    </artifacts>
+    <touchpoint id='org.eclipse.equinox.p2.osgi' version='1.0.0'/>
+    <touchpointData size='1'>
+      <instructions size='1'>
+        <instruction key='manifest'>
+          Bundle-SymbolicName: org.svnkit&#xA;Bundle-Version: 1.0.0&#xA;
+        </instruction>
+      </instructions>
+    </touchpointData>
+  </unit>
+</units>

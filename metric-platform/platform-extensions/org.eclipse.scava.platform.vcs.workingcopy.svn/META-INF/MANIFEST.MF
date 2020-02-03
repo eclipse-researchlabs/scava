@@ -8,5 +8,5 @@ Require-Bundle: org.eclipse.scava.platform.vcs.workingcopy.manager,
  org.eclipse.scava.platform.vcs.svn,
  org.eclipse.scava.repository.model.vcs.svn,
  org.eclipse.scava.repository.model,
- org.svnkit
+ org.svnkit;bundle-version="1.0.0"
 Export-Package: org.eclipse.scava.platform.vcs.workingcopy.svn

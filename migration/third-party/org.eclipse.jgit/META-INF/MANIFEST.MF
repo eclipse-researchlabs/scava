@@ -37,9 +37,9 @@ Export-Package: org.eclipse.jgit.api,
  org.eclipse.jgit.util.io
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: com.jcraft.jsch,
- org.slf4j.slf4j-api,
+ org.slf4j.api;bundle-version="1.7.2",
  com.googlecode.javaewah.JavaEWAH,
- org.bouncycastle.bcprov-jdk15on,
- org.bouncycastle.bcpkix-jdk15on,
- org.bouncycastle.bcpg-jdk15on,
+ org.bouncycastle.bcprov;bundle-version="1.59.0",
+ org.bouncycastle.bcpkix;bundle-version="1.59.0",
+ org.bouncycastle.bcpg;bundle-version="1.59.0",
  com.jcraft.jzlib

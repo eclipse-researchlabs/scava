@@ -14,5 +14,5 @@ Export-Package: cc.fasttext,
  cc.fasttext.io.impl
 Automatic-Module-Name: org.eclipse.scava.nlp.fasttext
 Require-Bundle: com.google.guava-jre,
- org.apache.commons.lang,
+ org.apache.commons.lang3;bundle-version="1.0.0",
  org.apache.log4j
