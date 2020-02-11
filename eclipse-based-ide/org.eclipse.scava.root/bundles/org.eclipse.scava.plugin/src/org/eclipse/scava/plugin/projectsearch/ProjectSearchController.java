@@ -10,6 +10,7 @@
 
 package org.eclipse.scava.plugin.projectsearch;
 
+import org.eclipse.scava.plugin.Activator;
 import org.eclipse.scava.plugin.mvc.controller.Controller;
 import org.eclipse.scava.plugin.mvc.controller.ModelController;
 import org.eclipse.scava.plugin.mvc.event.routed.IRoutedEvent;
@@ -21,6 +22,7 @@ import org.eclipse.scava.plugin.projectsearch.search.SearchHideRequestEvent;
 import org.eclipse.scava.plugin.projectsearch.search.SearchModel;
 import org.eclipse.scava.plugin.projectsearch.search.SearchShowRequestEvent;
 import org.eclipse.scava.plugin.projectsearch.search.SearchView;
+import org.eclipse.scava.plugin.usermonitoring.event.events.scava.ScavaApiAndQnARecommendationUsageEvent;
 import org.eclipse.ui.PlatformUI;
 
 public class ProjectSearchController extends ModelController<ProjectSearchModel> {
@@ -37,6 +39,12 @@ public class ProjectSearchController extends ModelController<ProjectSearchModel>
 		SearchView view = new SearchView(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		SearchController controller = new SearchController(this, model, view);
 		controller.init();
+		
+		/**
+		 * Throws an event to eventbus for user monitoring purposes.
+		 * */
+		Activator.getDefault().getEventBus().post(new ScavaApiAndQnARecommendationUsageEvent());
+		
 	}
 
 	@Override

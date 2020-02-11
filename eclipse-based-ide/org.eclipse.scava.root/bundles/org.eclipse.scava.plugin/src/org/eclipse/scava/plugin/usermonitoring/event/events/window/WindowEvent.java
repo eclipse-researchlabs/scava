@@ -19,6 +19,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.eclipse.scava.plugin.ui.errorhandler.ErrorHandler;
 import org.eclipse.scava.plugin.usermonitoring.ErrorType;
 import org.eclipse.scava.plugin.usermonitoring.descriptors.EdgeDescriptor;
+import org.eclipse.scava.plugin.usermonitoring.event.IDisableableEvent;
 import org.eclipse.scava.plugin.usermonitoring.event.events.Event;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.EdgeType;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexAllocator;
@@ -27,7 +28,7 @@ import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexType;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 
-public class WindowEvent extends Event {
+public class WindowEvent extends Event implements IDisableableEvent{
 
 	IWorkbenchWindow window;
 	WindowEventType type;

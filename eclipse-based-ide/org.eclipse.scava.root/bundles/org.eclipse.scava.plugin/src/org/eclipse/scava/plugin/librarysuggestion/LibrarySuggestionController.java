@@ -16,6 +16,7 @@ import java.util.HashSet;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.scava.plugin.Activator;
 import org.eclipse.scava.plugin.librarysuggestion.library.DisposeLibraryRequestEvent;
 import org.eclipse.scava.plugin.librarysuggestion.library.DoNotUseLibraryForSearchRequestEvent;
 import org.eclipse.scava.plugin.librarysuggestion.library.Library;
@@ -29,6 +30,7 @@ import org.eclipse.scava.plugin.librarysuggestion.library.UseLibraryForSearchReq
 import org.eclipse.scava.plugin.mvc.controller.Controller;
 import org.eclipse.scava.plugin.mvc.controller.ModelViewController;
 import org.eclipse.scava.plugin.mvc.event.routed.IRoutedEvent;
+import org.eclipse.scava.plugin.usermonitoring.event.events.scava.ScavaApiAndQnARecommendationUsageEvent;
 import org.eclipse.swt.widgets.Display;
 
 import com.squareup.okhttp.Call;
@@ -88,6 +90,13 @@ public class LibrarySuggestionController extends ModelViewController<LibrarySugg
 		updateSuggestedLibrariesAsync();
 
 		getView().setEnableInstall(!getModel().getPickedLibraries().isEmpty());
+		
+		
+		/**
+		 * Throws an event to eventbus for user monitoring purposes.
+		 * */
+		Activator.getDefault().getEventBus().post(new ScavaApiAndQnARecommendationUsageEvent());
+		
 	}
 
 	@Override

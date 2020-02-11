@@ -36,9 +36,11 @@ import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.FileAccesRate
 import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.GuiUsageRateBasicMetric;
 import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.IBasicMetric;
 import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.ModificationRateBasicMetric;
-import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.ScavaLibraryUsageBasicMetric;
-import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.ScavaSearchSuccesBasicMetric;
-import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.ScavaSearchUsageBasicMetric;
+import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.ScavaApiAndQnARecommendationUsageBasicMetric;
+import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.ScavaCodeRecommendationUsageBasicMetric;
+import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.ScavaLibrarySearchUsageBasicMetric;
+import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.ScavaProjectSearchUsageBasicMetric;
+import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.ScavaSearchLibraryUpdateUsageBasicMetric;
 import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.TestingRateBasicMetric;
 import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.WorkingTimeBasicMetric;
 import org.eclipse.scava.plugin.usermonitoring.metric.metrics.metric.IMetric;
@@ -119,9 +121,11 @@ public class MetricProvider {
 					if (!basicMilestone.isProjectSpecific() && scavaProject == general) {
 						metrics.add(new MetricDefinition(new GuiUsageRateBasicMetric(), GENERAL));
 						metrics.add(new MetricDefinition(new FileAccesRateBasicMetric(), GENERAL));
-						metrics.add(new MetricDefinition(new ScavaLibraryUsageBasicMetric(), GENERAL));
-						metrics.add(new MetricDefinition(new ScavaSearchSuccesBasicMetric(), GENERAL));
-						metrics.add(new MetricDefinition(new ScavaSearchUsageBasicMetric(), GENERAL));
+						metrics.add(new MetricDefinition(new ScavaApiAndQnARecommendationUsageBasicMetric(), GENERAL));
+						metrics.add(new MetricDefinition(new ScavaCodeRecommendationUsageBasicMetric(), GENERAL));
+						metrics.add(new MetricDefinition(new ScavaSearchLibraryUpdateUsageBasicMetric(), GENERAL));
+						metrics.add(new MetricDefinition(new ScavaProjectSearchUsageBasicMetric(), GENERAL));
+						metrics.add(new MetricDefinition(new ScavaLibrarySearchUsageBasicMetric(), GENERAL));
 						metrics.add(new MetricDefinition(new EclipseSearchUsageBasicMetric(), GENERAL));
 					}
 

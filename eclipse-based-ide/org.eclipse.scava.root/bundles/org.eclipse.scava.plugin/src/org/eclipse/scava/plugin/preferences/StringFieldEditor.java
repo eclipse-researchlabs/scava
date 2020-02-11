@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.scava.plugin.preferences;
 
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.resource.JFaceResources;

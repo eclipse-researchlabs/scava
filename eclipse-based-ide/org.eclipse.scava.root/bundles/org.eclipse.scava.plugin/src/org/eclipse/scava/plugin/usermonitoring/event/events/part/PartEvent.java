@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.scava.plugin.ui.errorhandler.ErrorHandler;
 import org.eclipse.scava.plugin.usermonitoring.ErrorType;
 import org.eclipse.scava.plugin.usermonitoring.descriptors.EdgeDescriptor;
+import org.eclipse.scava.plugin.usermonitoring.event.IDisableableEvent;
 import org.eclipse.scava.plugin.usermonitoring.event.IProjectRelated;
 import org.eclipse.scava.plugin.usermonitoring.event.events.Event;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.EdgeType;
@@ -39,7 +40,7 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-public class PartEvent extends Event implements IProjectRelated {
+public class PartEvent extends Event implements IProjectRelated,IDisableableEvent {
 
 	private PartEventType type;
 	private String title;

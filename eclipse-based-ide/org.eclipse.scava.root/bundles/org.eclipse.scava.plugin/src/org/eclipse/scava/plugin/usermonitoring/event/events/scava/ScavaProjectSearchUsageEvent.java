@@ -15,31 +15,34 @@
 package org.eclipse.scava.plugin.usermonitoring.event.events.scava;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.eclipse.scava.plugin.usermonitoring.event.IProjectRelated;
+import org.eclipse.scava.plugin.usermonitoring.event.IDisableableEvent;
 import org.eclipse.scava.plugin.usermonitoring.event.events.Event;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexAllocator;
+import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexProperty;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexType;
+import org.eclipse.scava.plugin.usermonitoring.metric.metrics.MetricException;
 
-public class ScavaSearchSuccesEvent extends Event implements IProjectRelated{
-	public ScavaSearchSuccesEvent() {
+public class ScavaProjectSearchUsageEvent extends Event implements IDisableableEvent{
 
+	
+	
+	public ScavaProjectSearchUsageEvent() {
+		// TODO Auto-generated constructor stub
 	}
-
+	
+	
 	@Override
 	public String toString() {
-		return "Date: " + date + " VertexType: " + VertexType.SCAVA_SEARCH_SUCCES_EVENT;
+		return "Date: " + date + " VertexType: " + VertexType.SCAVA_PROJECT_SEARCH_USAGE_EVENT;
 	}
-
+	
+	
 	@Override
-	public Vertex toNode(VertexAllocator allocator) {
-		/*
-		 * Vertex vertex = graphTraversalSource.addV("event").next();
-		 * vertex.property("VertexType", VertexType.SCAVA_SEARCH_SUCCES_EVENT);
-		 * vertex.property("TimeStamp", date);
-		 */
-		return null;
+	public Vertex toNode(VertexAllocator allocator) throws MetricException {
+		Vertex eventVertex = allocator.insertVertex("event", new VertexProperty("VertexType", VertexType.SCAVA_PROJECT_SEARCH_USAGE_EVENT),
+				new VertexProperty("TimeStamp", date));
+
+		return eventVertex;
 	}
-
-
 
 }

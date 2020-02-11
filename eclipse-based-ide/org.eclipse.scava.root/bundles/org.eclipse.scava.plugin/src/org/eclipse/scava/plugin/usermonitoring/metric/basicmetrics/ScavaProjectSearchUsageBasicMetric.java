@@ -19,25 +19,25 @@ import java.util.Map;
 
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.eclipse.scava.plugin.usermonitoring.event.events.scava.ScavaLibraryUsageEvent;
+import org.eclipse.scava.plugin.usermonitoring.event.events.scava.ScavaCodeRecommendationUsageEvent;
+import org.eclipse.scava.plugin.usermonitoring.event.events.scava.ScavaProjectSearchUsageEvent;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexType;
 
-@BasedOn(ScavaLibraryUsageEvent.class)
-public class ScavaLibraryUsageBasicMetric implements IBasicMetric {
+@BasedOn(ScavaProjectSearchUsageEvent.class)
+public class ScavaProjectSearchUsageBasicMetric implements IBasicMetric{
 
-	private static final String DESCRIPTION = "Level of using CROSSMINER library change function";
-	private static final String NAME = "Scava library usage";
+	private static final String DESCRIPTION = "Level of using CROSSMINER project search function";
+	private static final String NAME = "Project usage";
 	
 	@Override
 	public Map<String, Double> process(GraphTraversal<Vertex, Vertex> vertices) {
 		
 		Map<String, Double> valueMap = new HashMap<>();
-		
-		Long scavaLibraryChange = vertices.asAdmin().clone().has("VertexType", VertexType.SCAVA_LIBRARY_USAGE_EVENT).count().next();
-		
-		valueMap.put("general", (double)scavaLibraryChange);
-		return valueMap;
 
+		Long count = vertices.asAdmin().clone().has("VertexType", VertexType.SCAVA_PROJECT_SEARCH_USAGE_EVENT).count().next();
+		valueMap.put("general", (double) count);
+
+		return valueMap;
 	}
 
 	@Override
@@ -49,5 +49,5 @@ public class ScavaLibraryUsageBasicMetric implements IBasicMetric {
 	public String getName() {
 		return NAME;
 	}
-
+	
 }

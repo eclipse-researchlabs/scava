@@ -25,6 +25,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.scava.plugin.Activator;
+import org.eclipse.scava.plugin.usermonitoring.event.IDisableableEvent;
 import org.eclipse.scava.plugin.usermonitoring.event.events.Event;
 import org.eclipse.scava.plugin.usermonitoring.event.events.IEvent;
 import org.eclipse.scava.plugin.usermonitoring.metric.basicmetrics.BasedOn;
@@ -99,7 +100,7 @@ public class UserActivityEvents extends PreferencePage implements IWorkbenchPref
 		collectedEventsComposite.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
 
 		Reflections reflections = new Reflections("org.eclipse.scava.plugin");
-		List<Class<? extends IEvent>> eventTypes = reflections.getSubTypesOf(Event.class).stream().sorted((a, b) -> a.getSimpleName().compareTo(b.getSimpleName())).collect(Collectors.toList());
+		List<Class<? extends IDisableableEvent>> eventTypes = reflections.getSubTypesOf(IDisableableEvent.class).stream().sorted((a, b) -> a.getSimpleName().compareTo(b.getSimpleName())).collect(Collectors.toList());
 
 		for (Class<?> eventType : eventTypes) {
 			Composite buttonContainer = new Composite(collectedEventsComposite, SWT.NONE);

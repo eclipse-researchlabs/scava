@@ -13,11 +13,14 @@ package org.eclipse.scava.plugin.apidocumentation;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.scava.plugin.Activator;
 import org.eclipse.scava.plugin.async.api.ApiAsyncRequestController;
 import org.eclipse.scava.plugin.feedback.FeedbackResource;
 import org.eclipse.scava.plugin.mvc.controller.Controller;
 import org.eclipse.scava.plugin.mvc.controller.ModelViewController;
 import org.eclipse.scava.plugin.ui.errorhandler.ErrorHandler;
+import org.eclipse.scava.plugin.usermonitoring.event.events.eclipse.EclipseCloseEvent;
+import org.eclipse.scava.plugin.usermonitoring.event.events.scava.ScavaApiAndQnARecommendationUsageEvent;
 import org.eclipse.scava.plugin.webreferenceviewer.WebReferenceViewerController;
 import org.eclipse.scava.plugin.webreferenceviewer.WebReferenceViewerModel;
 import org.eclipse.scava.plugin.webreferenceviewer.WebReferenceViewerView;
@@ -60,6 +63,11 @@ public class ApiDocumentationController extends ModelViewController<ApiDocumenta
 
 	public void request(String methodCode) {
 		recommendationRequestController.execute(getModel().requestApiDocumentationAsync(methodCode));
+		
+		/**
+		 * Throws an event to eventbus for user monitoring purposes.
+		 * */
+		Activator.getDefault().getEventBus().post(new ScavaApiAndQnARecommendationUsageEvent());
 	}
 
 	private void onSuccess(Recommendation recommendation, Query query) {

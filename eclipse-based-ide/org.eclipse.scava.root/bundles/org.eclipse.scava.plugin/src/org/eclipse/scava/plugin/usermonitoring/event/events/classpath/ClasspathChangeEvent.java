@@ -24,6 +24,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.scava.plugin.ui.errorhandler.ErrorHandler;
 import org.eclipse.scava.plugin.usermonitoring.ErrorType;
 import org.eclipse.scava.plugin.usermonitoring.descriptors.EdgeDescriptor;
+import org.eclipse.scava.plugin.usermonitoring.event.IDisableableEvent;
 import org.eclipse.scava.plugin.usermonitoring.event.IProjectRelated;
 import org.eclipse.scava.plugin.usermonitoring.event.events.Event;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.EdgeType;

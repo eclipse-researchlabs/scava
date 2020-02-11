@@ -23,6 +23,7 @@ import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.scava.plugin.ui.errorhandler.ErrorHandler;
 import org.eclipse.scava.plugin.usermonitoring.ErrorType;
 import org.eclipse.scava.plugin.usermonitoring.descriptors.EdgeDescriptor;
+import org.eclipse.scava.plugin.usermonitoring.event.IDisableableEvent;
 import org.eclipse.scava.plugin.usermonitoring.event.IFlushableEvent;
 import org.eclipse.scava.plugin.usermonitoring.event.IProjectRelated;
 import org.eclipse.scava.plugin.usermonitoring.event.events.Event;
@@ -33,7 +34,7 @@ import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexType;
 import org.eclipse.scava.plugin.usermonitoring.metric.metrics.MetricException;
 import org.eclipse.swt.widgets.Display;
 
-public class DocumentEvent extends Event implements IFlushableEvent<DocumentEvent>, IProjectRelated {
+public class DocumentEvent extends Event implements IFlushableEvent<DocumentEvent>, IProjectRelated, IDisableableEvent {
 
 	private String resourceTitle;
 	private int count = 1;

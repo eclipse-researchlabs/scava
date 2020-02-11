@@ -36,7 +36,7 @@ public class SearchResultController extends ModelViewController<SearchResultMode
 		
 		Artifact project = getModel().getProject();
 		
-		getView().setName(Optional.ofNullable(project.getFullName()).orElse(Constants.NO_DATA));
+		getView().setName(Optional.ofNullable(project.getFullName()).orElse(Optional.ofNullable(project.getShortName()).orElse(Constants.NO_DATA)));
 		getView().setStarred(Optional.ofNullable(project.getStarred()).orElse(Collections.emptyList()).size());
 		getView().setDependencies(Optional.ofNullable(project.getDependencies()).orElse(Collections.emptyList()).size());
 		getView().setActive(Optional.ofNullable(project.isActive()).orElse(false));

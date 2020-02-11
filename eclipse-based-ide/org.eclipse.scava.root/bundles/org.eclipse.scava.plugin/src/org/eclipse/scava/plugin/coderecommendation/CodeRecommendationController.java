@@ -87,9 +87,11 @@ public class CodeRecommendationController extends ModelViewController<CodeRecomm
 	}
 
 	public void request(IFile file, int startLine, int endLine, String sourceCode) {
+
 		recommendationRequestController.execute(getModel().getApiCallResults(sourceCode).onSuccessWithQuery(
 				(recommendation, query) -> onSuccess(recommendation, query, file, startLine, endLine, sourceCode)));
 	}
+
 
 	private void onSuccess(Recommendation recommendation, Query query, IFile file, int startLine, int endLine,
 			String sourceCode) {

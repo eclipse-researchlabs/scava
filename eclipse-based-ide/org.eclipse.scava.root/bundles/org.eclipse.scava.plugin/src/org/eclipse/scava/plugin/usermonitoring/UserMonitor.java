@@ -98,7 +98,7 @@ public class UserMonitor {
 
 		KnowledgeBaseAccess access = new KnowledgeBaseAccess();
 		access.getArtifactRestControllerApi(Preferences.TIMEOUT_UPLOAD_METRICS).storeIDEMetricsUsingPOST(metrics);
-
+		
 		return true;
 	}
 

@@ -21,13 +21,14 @@ import java.util.stream.Collectors;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.scava.plugin.Activator;
 import org.eclipse.scava.plugin.libraryversions.Library;
 import org.eclipse.scava.plugin.libraryversions.LibraryFilterRule;
 import org.eclipse.scava.plugin.libraryversions.checker.RefreshAvailableLibraryUpdates;
 import org.eclipse.scava.plugin.mvc.controller.Controller;
 import org.eclipse.scava.plugin.mvc.controller.ModelViewController;
 import org.eclipse.scava.plugin.ui.errorhandler.ErrorHandler;
-
+import org.eclipse.scava.plugin.usermonitoring.event.events.scava.ScavaApiAndQnARecommendationUsageEvent;
 import io.swagger.client.ApiException;
 
 public class LibraryVersionUpdaterController
@@ -84,6 +85,13 @@ public class LibraryVersionUpdaterController
 				}
 			}
 		}
+		
+		
+		/**
+		 * Throws an event to eventbus for user monitoring purposes.
+		 * */
+		Activator.getDefault().getEventBus().post(new ScavaApiAndQnARecommendationUsageEvent());
+		
 	}
 
 	@Override

@@ -16,6 +16,7 @@ package org.eclipse.scava.plugin.usermonitoring.event.events.search;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.eclipse.scava.plugin.usermonitoring.descriptors.EdgeDescriptor;
+import org.eclipse.scava.plugin.usermonitoring.event.IDisableableEvent;
 import org.eclipse.scava.plugin.usermonitoring.event.events.Event;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.EdgeType;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexAllocator;
@@ -23,7 +24,7 @@ import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexProperty;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexType;
 import org.eclipse.scava.plugin.usermonitoring.metric.metrics.MetricException;
 
-public class SearchEvent extends Event {
+public class SearchEvent extends Event implements IDisableableEvent{
 
 	private String searchString;
 

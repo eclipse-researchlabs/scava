@@ -14,12 +14,19 @@
 **********************************************************************/
 package org.eclipse.scava.plugin.usermonitoring.event.events.scava;
 
+import org.eclipse.scava.plugin.Activator;
+
 public interface IScavaEventListener {
 
-	public void scavaLibraryUsage();
+	public void scavaApiAndQnARecommendationUsage(); 
 
-	public void scavaSearchSucces();
+	public void scavaCodeRecommendationUsage();
+	
+	public void scavaLibrarySearchUsageEvent();
+	
+	public void scavaProjectSearchUsageEvent();
+	
+	public void scavaSearchLibraryUpdateUsageEvent();
 
-	public void scavaSearchUsage();
 
 }

@@ -29,6 +29,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.scava.plugin.ui.errorhandler.ErrorHandler;
 import org.eclipse.scava.plugin.usermonitoring.ErrorType;
 import org.eclipse.scava.plugin.usermonitoring.descriptors.EdgeDescriptor;
+import org.eclipse.scava.plugin.usermonitoring.event.IDisableableEvent;
 import org.eclipse.scava.plugin.usermonitoring.event.IProjectRelated;
 import org.eclipse.scava.plugin.usermonitoring.event.events.Event;
 import org.eclipse.scava.plugin.usermonitoring.gremlin.database.EdgeType;
@@ -38,7 +39,7 @@ import org.eclipse.scava.plugin.usermonitoring.gremlin.database.VertexType;
 import org.eclipse.scava.plugin.usermonitoring.metric.metrics.MetricException;
 import org.eclipse.swt.widgets.Display;
 
-public class LaunchEvent extends Event implements IProjectRelated {
+public class LaunchEvent extends Event implements IProjectRelated,IDisableableEvent {
 
 	private final ILaunch launch;
 	private IJavaProject javaProject;

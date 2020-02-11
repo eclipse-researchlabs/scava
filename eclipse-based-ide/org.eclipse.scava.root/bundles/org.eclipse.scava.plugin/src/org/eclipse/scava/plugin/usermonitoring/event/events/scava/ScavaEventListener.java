@@ -24,20 +24,32 @@ public class ScavaEventListener implements IScavaEventListener, IEventListener {
 	}
 
 	@Override
-	public void scavaLibraryUsage() {
-		Activator.getDefault().getEventBus().post(new ScavaLibraryUsageEvent());
+	public void scavaApiAndQnARecommendationUsage() {
+		Activator.getDefault().getEventBus().post(new ScavaApiAndQnARecommendationUsageEvent());
 
 	}
 
 	@Override
-	public void scavaSearchSucces() {
-		Activator.getDefault().getEventBus().post(new ScavaSearchSuccesEvent());
+	public void scavaCodeRecommendationUsage() {
+		Activator.getDefault().getEventBus().post(new ScavaCodeRecommendationUsageEvent());
 
 	}
 
 	@Override
-	public void scavaSearchUsage() {
-		Activator.getDefault().getEventBus().post(new ScavaSearchUsageEvent());
+	public void scavaLibrarySearchUsageEvent() {
+		Activator.getDefault().getEventBus().post(new ScavaLibrarySearchUsageEvent());
+
+	}
+	
+	@Override
+	public void scavaProjectSearchUsageEvent() {
+		Activator.getDefault().getEventBus().post(new ScavaProjectSearchUsageEvent());
+
+	}
+	
+	@Override
+	public void scavaSearchLibraryUpdateUsageEvent() {
+		Activator.getDefault().getEventBus().post(new ScavaSearchLibraryUpdateUsageEvent());
 
 	}
 

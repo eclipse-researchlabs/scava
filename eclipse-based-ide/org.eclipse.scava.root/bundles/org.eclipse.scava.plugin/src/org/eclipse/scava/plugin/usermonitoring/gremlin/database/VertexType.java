@@ -28,6 +28,14 @@ public class VertexType {
 	public static final String UPLOAD_EVENT = "UploadEvent";
 	public static final String SEARCH_EVENT = "SearchEvent";
 	public static final String ECLIPSE_CLOSE_EVENT = "EclipseCloseEvent";
+	
+	public static final String SCAVA_PROJECT_SEARCH_USAGE_EVENT = "ScavaProjectSearchUsageEvent";
+	public static final String SCAVA_CODE_RECOMMENDATION_USAGE_EVENT = "ScavaCodeRecommendationUsageEvent";
+	public static final String SCAVA_API_AND_QNA_USAGE_EVENT = "ScavaApiAndQnARecommendationUsageEvent";
+	public static final String SCAVA_LIBRARY_SEARCH_USAGE_EVENT = "ScavaLibrarySearchUsageEvent";
+	public static final String SCAVA_LIBRARY_UPDATE_USAGE_EVENT = "ScavaSearchLibraryUpdateUsageEvent";
+	
+	
 	public static final String SCAVA_LIBRARY_USAGE_EVENT = "ScavaLibraryUsageEvent";
 	public static final String SCAVA_SEARCH_USAGE_EVENT = "ScavaSearchUsageEvent";
 	public static final String SCAVA_SEARCH_SUCCES_EVENT = "ScavaSearchSuccesEvent";
