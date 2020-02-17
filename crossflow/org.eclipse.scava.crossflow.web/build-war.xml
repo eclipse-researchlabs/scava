@@ -70,6 +70,14 @@
 		<copy todir="WebContent/WEB-INF/lib/bundles">
             <fileset dir="../org.eclipse.scava.crossflow.runtime.dependencies/lib/bundles" includes="*.jar" />
         </copy>
+
+		<copy todir="WebContent/WEB-INF/lib/jars">
+            <fileset dir="../../restmule/org.eclipse.scava.crossflow.restmule.dependencies/lib/jars" includes="*.jar" />
+        </copy>
+		<copy todir="WebContent/WEB-INF/lib/bundles">
+            <fileset dir="../../restmule/org.eclipse.scava.crossflow.restmule.dependencies/lib/bundles" includes="*.jar" />
+        </copy>	
+		
 	</target>
 	
 	<!-- Run thrift -->
@@ -101,6 +109,15 @@
             <fileset dir="../org.eclipse.scava.crossflow.runtime/bin" />
         </jar>
 
+        <jar destfile="WebContent/WEB-INF/lib/jars/org.eclipse.scava.crossflow.restmule.core.jar">
+            <fileset dir="../../restmule/org.eclipse.scava.crossflow.restmule.core/bin" />
+        </jar>
+            	
+        <jar destfile="WebContent/WEB-INF/lib/jars/org.eclipse.scava.crossflow.restmule.client.github.jar">
+        	<fileset dir="../../restmule/org.eclipse.scava.crossflow.restmule.client.github/bin" />
+        	<fileset dir="../../restmule/org.eclipse.scava.crossflow.restmule.client.github/resources" />
+        </jar>            	
+		
         <eclipse.refreshLocal resource="org.eclipse.scava.crossflow.web" depth="-1" />
 
     </target>

@@ -9,7 +9,9 @@
 				<div class="row">
 					<div class="col-10">
 						<!-- MODEL -->
-						<div id="graphContainer" style="position: relative; overflow: scroll; width: 100%; height: 100%; cursor: default;"></div>
+						<div id="graphContainer" style="position: relative; overflow: auto; width: 100%; height: 100%; cursor: default;"></div>
+						
+					<br>	
 					</div>
 					<div class="col-2">
 						<button type='button' class="btn btn-started my-2 btn-sm btn-block" disabled>STARTED</button>

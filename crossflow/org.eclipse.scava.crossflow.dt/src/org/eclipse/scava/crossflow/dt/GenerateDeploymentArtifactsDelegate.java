@@ -36,7 +36,7 @@ public class GenerateDeploymentArtifactsDelegate implements IObjectActionDelegat
 			
 			// FIXME Aren't this workflow/example specific?			
 			File inFile = new File(inFolder, "input.csv");
-			inFile.createNewFile();
+			//inFile.createNewFile();
 			File outFile = new File(outFolder, "output.csv");
 			outFile.createNewFile();
 			

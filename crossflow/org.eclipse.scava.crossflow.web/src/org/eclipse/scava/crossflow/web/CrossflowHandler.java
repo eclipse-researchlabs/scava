@@ -231,15 +231,22 @@ public class CrossflowHandler implements Crossflow.Iface {
 			boolean header = true;
 			FileReader fileReader = new FileReader(file);
 			for (CSVRecord record : CSVFormat.RFC4180.parse(fileReader)) {
-				Row row = new Row();
+				boolean ignoreCommentRow = false;
 				for (int i = 0; i < record.size(); i++) {
-					row.addToCells(record.get(i));
+					ignoreCommentRow = ignoreCommentRow || record.get(i).startsWith("//");
 				}
-				if (header) {
-					table.setHeader(row);
-					header = false;
-				} else {
-					table.addToRows(row);
+				if (!ignoreCommentRow) {
+
+					Row row = new Row();
+					for (int i = 0; i < record.size(); i++) {
+						row.addToCells(record.get(i));
+					}
+					if (header) {
+						table.setHeader(row);
+						header = false;
+					} else {
+						table.addToRows(row);
+					}
 				}
 			}
 			fileReader.close();

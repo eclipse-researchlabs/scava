@@ -94,7 +94,7 @@ operation Stream createEdges() {%]
 
 
 operation getLayoutInformation(element: Any) : Bounds {
-    var shape = Shape.all.selectOne(s | s.element == element);
+    var shape = Node.all.println.selectOne(s | s.element == element.println);
     if (shape.isDefined()) {
         return shape.layoutConstraint;
     }
