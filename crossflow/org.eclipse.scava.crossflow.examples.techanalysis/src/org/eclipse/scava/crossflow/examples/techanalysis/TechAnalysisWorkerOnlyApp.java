@@ -18,7 +18,7 @@ public class TechAnalysisWorkerOnlyApp {
 	public static void main(String[] args) throws Exception {
 		
 		//CloneUtils.removeRepoClones(TechAnalysisProperties.CLONE_PARENT_DESTINATION); 
-		GitHubTechnologyAnalysis worker = new GitHubTechnologyAnalysis(Mode.WORKER);
+		TechnologyAnalysis worker = new TechnologyAnalysis(Mode.WORKER);
 		worker.setMaster("localhost");
 		worker.setName("Worker-"+String.valueOf(Math.random()).substring(2));
 		worker.setInstanceId("GitHub Technology Popularity Analysis");

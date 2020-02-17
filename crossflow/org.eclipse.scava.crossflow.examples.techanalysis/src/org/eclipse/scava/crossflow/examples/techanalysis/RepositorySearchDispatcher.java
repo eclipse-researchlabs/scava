@@ -14,9 +14,13 @@ public class RepositorySearchDispatcher extends RepositorySearchDispatcherBase {
 
 		// send each repository only once to be cloned/analysed
 		if (repos.add(repository.name)) {
-			for (Technology tech : techs)
-				sendToRepositorySearches(new RepoTechPair(tech, repository.url, repository.name));
-
+			for (Technology tech : techs) {
+				RepoTechPair rtp = new RepoTechPair(tech, repository.url, repository.name);
+				//
+				rtp.setCorrelationId(repository.getJobId());
+				//
+				sendToRepositorySearches(rtp);
+			}
 		}
 
 	}

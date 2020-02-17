@@ -30,6 +30,9 @@ public class CodeSearcher extends CodeSearcherBase {
 			SearchCode.Repository resultRepo = resultItem
 					.getRepository();
 			Repository repositoryInst = new Repository();
+			//
+			repositoryInst.setCorrelationId(tech.getJobId());
+			//
 			repositoryInst.setUrl(resultRepo.getHtmlUrl());
 			repositoryInst.setName(resultRepo.getFullName());
 

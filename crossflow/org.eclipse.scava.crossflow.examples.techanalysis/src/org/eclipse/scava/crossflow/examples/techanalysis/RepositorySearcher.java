@@ -64,7 +64,9 @@ public class RepositorySearcher extends OpinionatedRepositorySearcherBase {
 
 		// use clone to get files (and count)
 		AnalysisResult res = countFiles(localClone, repository.tech);
-
+		//
+		res.setCorrelationId(repository.getJobId());
+		//
 		// use clone to get authors (and count)
 		// XXX limit to authors of commits of relevant files
 		countAuthors(localClone, res);

@@ -31,6 +31,7 @@
       <fields xmi:type="cf:DataField" xmi:id="_QoblME8xEeq7WtG4DpZr-A" name="tech" type="Technology"/>
     </types>
     <languages xmi:type="cf:Language" xmi:id="_QMy8kE_2EeqUt69jXIes_w" name="Java" package="org.eclipse.scava.crossflow.examples.techanalysis" outputFolder="src" genOutputFolder="src-gen"/>
+    <serializer xmi:type="cf:Serializer" xmi:id="_yIKpoFEZEeqiQ7Fjf_FBJg" name="xml"/>
   </cf:Workflow>
   <notation:Diagram xmi:id="_bop1QIXqEemnurftv9BbEg" type="Crossflow" element="_bobLwIXqEemnurftv9BbEg" name="techanalysis.crossflow_diagram" measurementUnit="Pixel">
     <children xmi:type="notation:Node" xmi:id="_5CjdITFBEeqv3c5biDK1tw" type="2004" element="_5CjdIDFBEeqv3c5biDK1tw">
@@ -237,6 +238,18 @@
       <styles xmi:type="notation:FontStyle" xmi:id="_7CX7clDgEeqGxMX41ZCzgA" fontName="Segoe UI"/>
       <styles xmi:type="notation:LineStyle" xmi:id="_7CX7c1DgEeqGxMX41ZCzgA"/>
       <layoutConstraint xmi:type="notation:Bounds" xmi:id="_7CX7dFDgEeqGxMX41ZCzgA" x="210" y="285"/>
+    </children>
+    <children xmi:type="notation:Node" xmi:id="_yI8swFEZEeqiQ7Fjf_FBJg" type="2018" element="_yIKpoFEZEeqiQ7Fjf_FBJg">
+      <children xmi:type="notation:DecorationNode" xmi:id="_yI9T0FEZEeqiQ7Fjf_FBJg" type="5023"/>
+      <children xmi:type="notation:DecorationNode" xmi:id="_yI9T0VEZEeqiQ7Fjf_FBJg" type="7005">
+        <styles xmi:type="notation:SortingStyle" xmi:id="_yI9T0lEZEeqiQ7Fjf_FBJg"/>
+        <styles xmi:type="notation:FilteringStyle" xmi:id="_yI9T01EZEeqiQ7Fjf_FBJg"/>
+      </children>
+      <styles xmi:type="notation:DescriptionStyle" xmi:id="_yI8swVEZEeqiQ7Fjf_FBJg"/>
+      <styles xmi:type="notation:FontStyle" xmi:id="_yI8swlEZEeqiQ7Fjf_FBJg" fontName="Segoe UI"/>
+      <styles xmi:type="notation:LineStyle" xmi:id="_yI8sw1EZEeqiQ7Fjf_FBJg"/>
+      <styles xmi:type="notation:HintedDiagramLinkStyle" xmi:id="_yI8sxFEZEeqiQ7Fjf_FBJg"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_yI8sxVEZEeqiQ7Fjf_FBJg" x="60" y="330"/>
     </children>
     <styles xmi:type="notation:DiagramStyle" xmi:id="_bop1QYXqEemnurftv9BbEg"/>
     <edges xmi:type="notation:Connector" xmi:id="_WwkBEE8xEeq7WtG4DpZr-A" type="4004" source="_PvZEYE8xEeq7WtG4DpZr-A" target="_MWLs4E8xEeq7WtG4DpZr-A">

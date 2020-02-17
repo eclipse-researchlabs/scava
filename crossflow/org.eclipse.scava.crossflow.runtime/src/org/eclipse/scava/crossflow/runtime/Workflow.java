@@ -520,16 +520,15 @@ public abstract class Workflow<E extends Enum<E>> {
 
 						// System.err.println(activeJobs.size() + " " + areStreamsEmpty());
 
-						boolean canTerminate = activeJobs.size() == 0 && areStreamsEmpty();
-
 						if (aboutToTerminate) {
-							if (canTerminate) {
+							if (canTerminate()) {
 								terminate();
 							}
 						} else {
-							aboutToTerminate = canTerminate;
+							aboutToTerminate = canTerminate();
 						}
 					}
+
 				}, delay, 2000);
 
 			}
@@ -600,6 +599,12 @@ public abstract class Workflow<E extends Enum<E>> {
 			}
 
 		}
+	}
+
+	private boolean canTerminate() {
+		boolean se = areStreamsEmpty();
+		// System.out.println(activeJobs + "::" + se);
+		return activeJobs.size() == 0 && se;
 	}
 
 	public void cancelTermination() {

@@ -6,7 +6,7 @@ public class TechnologyAnalysisApp {
 
 	public static void main(String[] args) throws Exception {
 		
-		GitHubTechnologyAnalysis master = new GitHubTechnologyAnalysis(Mode.MASTER);
+		TechnologyAnalysis master = new TechnologyAnalysis(Mode.MASTER);
 		master.createBroker(true);
 		master.setMaster("localhost");
 		

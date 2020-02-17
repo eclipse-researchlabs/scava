@@ -21,8 +21,11 @@ public class TechnologySource extends TechnologySourceBase {
 				Technology technologyTuple = new Technology();
 				technologyTuple.setFileExt(record.get(0));
 				technologyTuple.setTechKey(record.get(1));
-				sendToTechnologies(technologyTuple);
-
+				if (!technologyTuple.getFileExt().startsWith("//")) {
+					System.out.println("sending technology: " + "fileExt=" + technologyTuple.fileExt + " techKey="
+							+ technologyTuple.techKey);
+					sendToTechnologies(technologyTuple);
+				}
 			}
 		} catch (Exception e) {
 			workflow.log(LogLevel.ERROR, e.getMessage());
