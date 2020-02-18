@@ -10,9 +10,10 @@
 package org.eclipse.scava.crossflow.examples.techanalysis;
 
 import java.io.File;
-import java.nio.file.CopyOption;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,30 +41,46 @@ public class RepositoryResultSink extends RepositoryResultSinkBase {
 				public void run() {
 					flushToDisk(false);
 				}
-			}, 2000, 2000);
+			}, 3000, 3000);
 		started = true;
 
-		if (!results.containsKey(analysisResult.repository.getName()) && analysisResult.repository.getName() != null) {
-			// add new item
-			results.put(analysisResult.repository.getName(), analysisResult);
+		String key = analysisResult.repository.url + "::" + analysisResult.technology.techKey + "::"
+				+ analysisResult.technology.fileExt;
 
-		} else if (results.containsKey(analysisResult.repository.getName())) {
-			// supplement new item with existing information (if available)
-			AnalysisResult existingResult = results.get(analysisResult.repository.getName());
-
-			if (analysisResult.getAuthorCount() < existingResult.getAuthorCount()) {
-				analysisResult.setAuthorCount(existingResult.getAuthorCount());
-			}
-			if (analysisResult.getFileCount() < existingResult.getFileCount()) {
-				analysisResult.setFileCount(existingResult.getFileCount());
-			}
-			results.replace(existingResult.repository.getName(), analysisResult);
+		// wait if the current data is being written to disk
+		if (flushing) {
+			Thread.sleep(100);
 		}
 
+		if (!results.containsKey(key) && analysisResult.repository.getName() != null) {
+			// add new item if it contains files of the relevant technology
+			if (analysisResult.getFileCount() > 0)
+				results.put(key, analysisResult);
+
+		} else if (results.containsKey(key)) {
+			// supplement new item with existing information (if available)
+			if (analysisResult.getFileCount() > 0) {
+
+				AnalysisResult existingResult = results.get(key);
+
+				if (analysisResult.getAuthorCount() < existingResult.getAuthorCount()) {
+					System.out.println("RepositoryResultSink: replacing authors: " + analysisResult.getAuthorCount()
+							+ "" + existingResult.getAuthorCount());
+					analysisResult.setAuthorCount(existingResult.getAuthorCount());
+				}
+				if (analysisResult.getFileCount() < existingResult.getFileCount()) {
+					System.out.println("RepositoryResultSink: replacing files: " + analysisResult.getFileCount() + ""
+							+ existingResult.getFileCount());
+					analysisResult.setFileCount(existingResult.getFileCount());
+				}
+				results.put(key, analysisResult);
+			}
+		}
 	}
 
 	@Override
 	public void close() {
+		System.out.println("RepositoryResultSink close() called.");
 		t.cancel();
 		// flushToDisk(true);
 		while (flushing)
@@ -76,20 +93,18 @@ public class RepositoryResultSink extends RepositoryResultSinkBase {
 
 	boolean flushing = false;
 
-	HashMap<String, AnalysisResult> merged = new HashMap<String, AnalysisResult>();
-
 	private synchronized void flushToDisk(boolean force) {
+		CsvWriter writer = null;
 		try {
 			if (!flushing || force) {
 				flushing = true;
 				File output = new File(workflow.getOutputDirectory(), "output.csv");
 				File outputTemp = new File(workflow.getOutputDirectory(), "output-temp.csv");
 
-				CsvWriter writer = new CsvWriter(outputTemp.getAbsolutePath(), "Technology", "repo count", "file count",
+				writer = new CsvWriter(outputTemp.getAbsolutePath(), "Technology", "repo count", "file count",
 						"unique author count");
 
-				merged = new HashMap<String, AnalysisResult>();
-				merged.clear();
+				HashMap<String, AnalysisResult> merged = new HashMap<String, AnalysisResult>();
 
 				for (AnalysisResult result : results.values()) {
 					// if (result.technology.techKey.equals("texttransformation")) {
@@ -98,11 +113,8 @@ public class RepositoryResultSink extends RepositoryResultSinkBase {
 						AnalysisResult newValues = merged.get(key);
 						// proxy for number of repos
 						newValues.setFailures(newValues.getFailures() + 1);
-
 						newValues.setFileCount(newValues.getFileCount() + result.getFileCount());
-
 						newValues.setAuthorCount(newValues.getAuthorCount() + result.getAuthorCount());
-
 						merged.put(key, newValues);
 					} else {
 						AnalysisResult clone = new AnalysisResult();
@@ -123,17 +135,34 @@ public class RepositoryResultSink extends RepositoryResultSinkBase {
 				writer.flush();
 				writer.close();
 
+				boolean removedPreviousOut = false;
 				if (output.exists())
-					output.delete();
-				outputTemp.renameTo(new File(workflow.getOutputDirectory(), "output.csv"));
-				Files.move(Paths.get(outputTemp.getPath()),
-						Paths.get(new File(workflow.getOutputDirectory(), "output.csv").getPath()), new CopyOption() {
-						});
+					removedPreviousOut = output.delete();
+				// outputTemp.renameTo(new File(workflow.getOutputDirectory(), "output.csv"));
+				if (removedPreviousOut) {
+					try {
+						Files.move(Paths.get(outputTemp.getPath()),
+								Paths.get(new File(workflow.getOutputDirectory(), "output.csv").getPath()),
+								StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
+					} catch (Exception e) {
+						System.out.println("WARNING: RepositoryResultSink failed to move temp output file.");
+					}
+				} else
+					System.out.println("INFO: RepositoryResultSink failed to remove old output file.");
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
-			log(LogLevel.ERROR,
-					"Exception occurred while flushing workflow output to disk. Message: " + ex.getMessage());
+
+			if (writer != null)
+				try {
+					writer.close();
+				} catch (IOException e) {
+					//
+				}
+
+			// ex.printStackTrace();
+
+			log(LogLevel.ERROR, "Exception occurred while flushing workflow output to disk. Type: "
+					+ ex.getClass().getName() + " Message: " + ex.getMessage());
 		} finally {
 			flushing = false;
 		}

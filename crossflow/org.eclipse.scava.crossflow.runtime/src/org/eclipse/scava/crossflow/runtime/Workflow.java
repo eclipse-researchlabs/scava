@@ -121,11 +121,10 @@ public abstract class Workflow<E extends Enum<E>> {
 	protected File runtimeModel = new File("").getParentFile();
 	protected File tempDirectory = null;
 
-	
 	@Parameter(names = {
-	"-disableStreamMetadataTopic" }, description = "Flag to disable data being sent to the Stream Metadata Topic")
+			"-disableStreamMetadataTopic" }, description = "Flag to disable data being sent to the Stream Metadata Topic")
 	protected boolean enableStreamMetadataTopic = true;
-	
+
 	/*
 	 * TRANSPORT
 	 */
@@ -528,7 +527,6 @@ public abstract class Workflow<E extends Enum<E>> {
 							aboutToTerminate = canTerminate();
 						}
 					}
-
 				}, delay, 2000);
 
 			}
@@ -602,9 +600,9 @@ public abstract class Workflow<E extends Enum<E>> {
 	}
 
 	private boolean canTerminate() {
-		boolean se = areStreamsEmpty();
-		// System.out.println(activeJobs + "::" + se);
-		return activeJobs.size() == 0 && se;
+		boolean streamsEmpty = areStreamsEmpty();
+		System.out.println(activeJobs + "::" + streamsEmpty);
+		return activeJobs.size() == 0 && streamsEmpty;
 	}
 
 	public void cancelTermination() {
@@ -718,6 +716,10 @@ public abstract class Workflow<E extends Enum<E>> {
 	 */
 	public abstract void run(long delay) throws Exception;
 
+	long same = 0;
+	int repeats = 0;
+	boolean forceWithInFlight = true;
+
 	private synchronized boolean areStreamsEmpty() {
 
 		try {
@@ -738,9 +740,11 @@ public abstract class Workflow<E extends Enum<E>> {
 
 					try {
 
-//						System.err.println(getName() + " : " + getInstanceId());
-//						System.err.println(destinationName + ":" + destinationType + " " + mbView.getQueueSize() + " "
-//								+ mbView.getInFlightCount());
+						if (mbView.getQueueSize() > 0 || mbView.getInFlightCount() > 0) {
+							System.err.println(getName() + " : " + getInstanceId());
+							System.err.println(destinationName + ":" + destinationType + " " + mbView.getQueueSize()
+									+ " " + mbView.getInFlightCount());
+						}
 
 						if (!c.isBroadcast()) {
 							if (mbView.getQueueSize() > 0) {
@@ -748,7 +752,22 @@ public abstract class Workflow<E extends Enum<E>> {
 							}
 						} else {
 							if (mbView.getInFlightCount() > 1) {
-								return false;
+								if (forceWithInFlight) {
+									if (same == mbView.getInFlightCount()) {
+										System.out.println(
+												"same inflight, maybe no consumers, adding 1 to repeat count (["
+														+ repeats + "] break at 5)");
+										repeats++;
+									} else {
+										repeats = 0;
+										same = mbView.getInFlightCount();
+									}
+									if (repeats < 5)
+										return false;
+									else if (repeats > 5)
+										repeats = 0;
+								} else
+									return false;
 							}
 						}
 
@@ -984,11 +1003,21 @@ public abstract class Workflow<E extends Enum<E>> {
 		return internalExceptions;
 	}
 
+	long lastException = 0;
+	Class<?> lastexceptionType = this.getClass();
+
 	public void reportInternalException(Exception ex) {
 		try {
 			internalExceptionsQueue.send(new InternalException(ex, this.getName()));
-		} catch (Exception e) {
-			unrecoverableException(e);
+		} catch (Throwable e) {
+			Long currentTime = System.currentTimeMillis();
+			if (currentTime - lastException > 1000 || !ex.getClass().equals(lastexceptionType)) {
+				lastException = currentTime;
+				lastexceptionType = ex.getClass();
+				unrecoverableException(new Exception(e));
+			} else if (lastException == 0)
+				System.err.println(
+						ex.getMessage() + ", suppressing similar reportInternalException errors for 1 second.");
 		}
 	}
 
@@ -996,24 +1025,40 @@ public abstract class Workflow<E extends Enum<E>> {
 		ex.printStackTrace();
 	}
 
+	long lastExceptionHidden = 0;
+
+	public void sendTaskStatusUpdate(TaskStatus t) throws Exception {
+		try {
+			taskStatusTopic.send(t);
+		} catch (Exception e) {
+			long currentTime = System.currentTimeMillis();
+			if (e.getMessage() != null && e.getMessage().equals("The Session is closed")) {
+				if (currentTime - lastExceptionHidden > 1000)
+					System.err.println("Cannot send setTaskInProgess(" + t + ") message after workflow termination.");
+				lastExceptionHidden = currentTime;
+			} else
+				throw e;
+		}
+	}
+
 	public void setTaskInProgess(Task caller) throws Exception {
-		taskStatusTopic.send(new TaskStatus(TaskStatuses.INPROGRESS, caller.getId(), ""));
+		sendTaskStatusUpdate(new TaskStatus(TaskStatuses.INPROGRESS, caller.getId(), ""));
 	}
 
 	public void setTaskWaiting(Task caller) throws Exception {
-		taskStatusTopic.send(new TaskStatus(TaskStatuses.WAITING, caller.getId(), ""));
+		sendTaskStatusUpdate(new TaskStatus(TaskStatuses.WAITING, caller.getId(), ""));
 	}
 
 	public void setTaskBlocked(Task caller, String reason) throws Exception {
-		taskStatusTopic.send(new TaskStatus(TaskStatuses.BLOCKED, caller.getId(), reason));
+		sendTaskStatusUpdate(new TaskStatus(TaskStatuses.BLOCKED, caller.getId(), reason));
 	}
 
 	public void setTaskUnblocked(Task caller) throws Exception {
-		taskStatusTopic.send(new TaskStatus(TaskStatuses.INPROGRESS, caller.getId(), ""));
+		sendTaskStatusUpdate(new TaskStatus(TaskStatuses.INPROGRESS, caller.getId(), ""));
 	}
 
 	public void setTaskFinished(Task caller) throws Exception {
-		taskStatusTopic.send(new TaskStatus(TaskStatuses.FINISHED, caller.getId(), ""));
+		sendTaskStatusUpdate(new TaskStatus(TaskStatuses.FINISHED, caller.getId(), ""));
 	}
 
 	public File getInputDirectory() {

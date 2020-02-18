@@ -7,6 +7,7 @@ import org.apache.activemq.command.ActiveMQDestination;
 import org.eclipse.scava.crossflow.runtime.Workflow;
 import org.eclipse.scava.crossflow.runtime.Job;
 import org.eclipse.scava.crossflow.runtime.JobStream;
+import org.eclipse.scava.crossflow.runtime.Task;
 import org.apache.activemq.command.ActiveMQBytesMessage;
 [%
 for(i in imports){%]
@@ -15,6 +16,24 @@ import [%=i%].*;
 
 @Generated(value = "org.eclipse.scava.crossflow.java.[%=genRule%]"[% if (genDate.isDefined()) { %], date = "[%=genDate%]"[%}%])
 public class [%=s.name%] extends JobStream<[%=s.type.name%]> {
+		
+	protected Task cacheManagerTask = new Task() {
+
+		@Override
+		public Workflow<?> getWorkflow() {
+			return workflow;
+		}
+
+		@Override
+		public String getId() {
+			return "CacheManager:[%=s.name%]";
+		}
+
+		@Override
+		public String getName() {
+			return "CacheManager:[%=s.name%]";
+		}
+	};	
 		
 	public [%=s.name%](Workflow<[%=w.name%]Tasks> workflow, boolean enablePrefetch) throws Exception {
 		super(workflow);
@@ -123,8 +142,13 @@ public class [%=s.name%] extends JobStream<[%=s.type.name%]> {
 			messageConsumer.setMessageListener(message -> {
 				try {
 					String messageText = getMessageText(message);
-					[%=s.type.name%] [%=s.type.name.ftlc%] = workflow.getSerializer().deserialize(messageText);
-					consumer.consume[%=s.name%]WithNotifications([%=s.type.name.ftlc%]);
+					[%=s.type.name%] [%=s.type.name.ftlc%] = null;
+					if(messageText != null && messageText.length() > 0)
+						[%=s.type.name.ftlc%] = workflow.getSerializer().deserialize(messageText);
+					if([%=s.type.name.ftlc%] != null)
+						consumer.consume[%=s.name%]WithNotifications([%=s.type.name.ftlc%]);
+					else
+						System.err.println("INFO: [%=s.name%] ignoring null message.");
 				} catch (Exception ex) {
 					workflow.reportInternalException(ex);
 				} finally { 

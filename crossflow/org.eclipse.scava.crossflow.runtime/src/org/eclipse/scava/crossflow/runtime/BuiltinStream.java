@@ -49,12 +49,25 @@ public class BuiltinStream<T extends Serializable> implements Stream {
 
 	}
 
+	long lastExceptionHidden = 0;
+
 	public void send(T t) throws Exception {
-		MessageProducer producer = session.createProducer(destination);
-		producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
-		producer.setPriority(9);
-		producer.send(session.createTextMessage(workflow.getSerializer().serialize(t)));
-		producer.close();
+		try {
+			MessageProducer producer = session.createProducer(destination);
+			producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+			producer.setPriority(9);
+			producer.send(session.createTextMessage(workflow.getSerializer().serialize(t)));
+			producer.close();
+		} catch (Exception e) {
+			long currentTime = System.currentTimeMillis();
+			if (e.getMessage() != null && e.getMessage().equals("The Session is closed")) {
+				if (currentTime - lastExceptionHidden > 1000)
+					System.err.println(
+							"BuiltinStream: send(" + t + ") cannot process message after workflow termination.");
+				lastExceptionHidden = currentTime;
+			} else
+				throw e;
+		}
 	}
 
 	public void addConsumer(BuiltinStreamConsumer<T> consumer) throws Exception {
@@ -79,8 +92,7 @@ public class BuiltinStream<T extends Serializable> implements Stream {
 					messageText = new String(data);
 				}
 				consumer.consume(workflow.getSerializer().deserialize(messageText));
-			}
-			catch (JMSException e) {
+			} catch (JMSException e) {
 				workflow.reportInternalException(e);
 			}
 		});

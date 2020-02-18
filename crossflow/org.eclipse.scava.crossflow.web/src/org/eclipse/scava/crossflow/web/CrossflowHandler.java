@@ -218,13 +218,14 @@ public class CrossflowHandler implements Crossflow.Iface {
 		file.delete();
 	}
 
+	Table prev = new Table();
 	@Override
 	public Table getContent(FileDescriptor fileDescriptor) throws TException {
 
 		File file = new File(servlet.getServletContext()
 				.getRealPath("experiments/" + fileDescriptor.getExperimentId() + "/" + fileDescriptor.getPath()));
 		if (!file.exists())
-			return new Table();
+			return prev = new Table();
 
 		try {
 			Table table = new Table();
@@ -250,9 +251,11 @@ public class CrossflowHandler implements Crossflow.Iface {
 				}
 			}
 			fileReader.close();
-			return table;
+			return prev = table;
 		} catch (Exception ex) {
-			throw new TException(ex);
+			System.out.println("INFO: CrossflowHandler failed to read output file, returning previous values.");
+			return prev;
+			// throw new TException(ex);
 		}
 
 	}

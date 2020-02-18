@@ -17,23 +17,6 @@ public abstract class JobStream<T extends Job> implements Stream {
 	protected Session session;
 	protected Workflow<?> workflow;
 	protected List<MessageConsumer> consumers = new LinkedList<>();
-	protected Task cacheManagerTask = new Task() {
-
-		@Override
-		public Workflow<?> getWorkflow() {
-			return workflow;
-		}
-
-		@Override
-		public String getId() {
-			return "CacheManager";
-		}
-
-		@Override
-		public String getName() {
-			return "CacheManager";
-		}
-	};
 
 	public JobStream(Workflow<?> workflow) throws Exception {
 		this.workflow = workflow;
